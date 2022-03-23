@@ -77,23 +77,23 @@ public class LTI3OAuthProviderProcessingFilter extends GenericFilterBean {
             // This is just for logging.
             if (log.isDebugEnabled()) {
                 Enumeration<String> sessionAttributes = httpServletRequest.getSession().getAttributeNames();
-                log.debug("-------------------------------------------------------------------------------------------------------");
+                log.error("-------------------------------------------------------------------------------------------------------");
                 while (sessionAttributes.hasMoreElements()) {
                     String attName = sessionAttributes.nextElement();
-                    log.debug(attName + " : " + httpServletRequest.getSession().getAttribute(attName));
+                    log.error(attName + " : " + httpServletRequest.getSession().getAttribute(attName));
 
                 }
-                log.debug("-------------------------------------------------------------------------------------------------------");
-                log.debug("Request Session Id in OAuthFilter: {}", httpServletRequest.getSession().getId());
-                log.debug("Request URL in OAuthFilter: {}", httpServletRequest.getRequestURL().toString());
-                log.debug("Request URI in OAuthFilter: {}", httpServletRequest.getRequestURI());
-                log.debug("Request Method in OAuthFilter: {}", httpServletRequest.getMethod());
-                log.debug("Request Cookies in OAuthFilter: {}", httpServletRequest.getCookies() != null ? Arrays.stream(httpServletRequest.getCookies()).toList().toString() : null);
+                log.error("-------------------------------------------------------------------------------------------------------");
+                log.error("Request Session Id in OAuthFilter: {}", httpServletRequest.getSession().getId());
+                log.error("Request URL in OAuthFilter: {}", httpServletRequest.getRequestURL().toString());
+                log.error("Request URI in OAuthFilter: {}", httpServletRequest.getRequestURI());
+                log.error("Request Method in OAuthFilter: {}", httpServletRequest.getMethod());
+                log.error("Request Cookies in OAuthFilter: {}", httpServletRequest.getCookies() != null ? Arrays.stream(httpServletRequest.getCookies()).toList().toString() : null);
                 Cookie[] cookies = httpServletRequest.getCookies();
                 if (cookies != null) {
                     for (Cookie cookie : cookies) {
-                        log.debug("Cookie name: {}", cookie.getName());
-                        log.debug("Cookie value: {}", cookie.getValue());
+                        log.error("Cookie name: {}", cookie.getName());
+                        log.error("Cookie value: {}", cookie.getValue());
                     }
                 }
             }
@@ -109,8 +109,8 @@ public class LTI3OAuthProviderProcessingFilter extends GenericFilterBean {
             //Second, as the state is something that we have created, it should be in our list of states.
             List<String> ltiState = (List<String>) httpServletRequest.getSession().getAttribute("lti_state");
             if (!ltiState.contains(state)) {
-                log.debug("State from request was {}", state);
-                log.debug("State in session was {}", ltiState.get(0));
+                log.error("State from request was {}", state);
+                log.error("State in session was {}", ltiState.get(0));
                 throw new IllegalStateException("LTI request doesn't contain the expected state");
             }
             //Third, we validate the state to be sure that is correct
@@ -145,10 +145,10 @@ public class LTI3OAuthProviderProcessingFilter extends GenericFilterBean {
         } catch (ExpiredJwtException eje) {
             log.info("Security exception for user {} - {}", eje.getClaims().getSubject(), eje.getMessage());
             ((HttpServletResponse) servletResponse).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            log.debug("Exception " + eje.getMessage(), eje);
+            log.error("Exception " + eje.getMessage(), eje);
         } catch (SignatureException ex) {
             log.info("Invalid JWT signature: {0}", ex.getMessage());
-            log.debug("Exception " + ex.getMessage(), ex);
+            log.error("Exception " + ex.getMessage(), ex);
             ((HttpServletResponse) servletResponse).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         } catch (DataServiceException e) {
             log.error("Error in the Data Service", e);

@@ -132,8 +132,8 @@ public class OIDCController {
             }
             session.setAttribute("lti_state", stateList);
 
-            log.debug("lti_state in session: {}", session.getAttribute("lti_state"));
-            log.debug("Session ID in OIDC Controller: {}", session.getId());
+            log.error("lti_state in session: {}", session.getAttribute("lti_state"));
+            log.error("Session ID in OIDC Controller: {}", session.getId());
 
             List<String> nonceList = session.getAttribute("lti_nonce") != null ?
                     (List) session.getAttribute("lti_nonce") :
