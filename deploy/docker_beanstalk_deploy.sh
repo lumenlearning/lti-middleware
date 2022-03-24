@@ -47,6 +47,7 @@ case "$1" in
 		export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY_PREPROD_EXEMPLAR:-$AWS_SECRET_ACCESS_KEY}
 		export BEANSTALK_ENV=lti-service-dev-exemplar-docker
 		export BEANSTALK_APPLICATION=lti-service
+		export S3_BUCKET_NAME=lumen-beanstalk-lti-service-dockerrun-dev-exemplar
 	;;
 	staging-exemplar)
 		echo "* Building Docker image and deploying to DEV-EXEMPLAR"
@@ -55,6 +56,7 @@ case "$1" in
 		export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY_PREPROD_EXEMPLAR:-$AWS_SECRET_ACCESS_KEY}
 		export BEANSTALK_ENV=lti-service-staging-exemplar-docker
 		export BEANSTALK_APPLICATION=lti-service
+	    export S3_BUCKET_NAME=lumen-beanstalk-lti-service-dockerrun-staging-exemplar
 	;;
 	prod)
 		echo "* Building Docker image and deploying to PROD."
