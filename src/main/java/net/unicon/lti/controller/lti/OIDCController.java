@@ -69,6 +69,7 @@ public class OIDCController {
      */
     @RequestMapping("/login_initiations")
     public String loginInitiations(HttpServletRequest req, HttpServletResponse res, Model model) {
+        System.out.println("Res headers: " + res.getHeaderNames().toString());
 
         // We need to receive the parameters and search for the deployment of the tool that matches with what we receive.
         LoginInitiationDTO loginInitiationDTO = new LoginInitiationDTO(req);
@@ -121,6 +122,7 @@ public class OIDCController {
             // This can be implemented in different ways, on this case, we are storing the state and nonce in
             // the httpsession, so we can compare later if they are valid states and nonces.
             HttpSession session = req.getSession();
+            System.out.println(session.getServletContext().getSessionCookieConfig().getName());
             List<String> stateList = session.getAttribute("lti_state") != null ?
                     (List) session.getAttribute("lti_state") :
                     new ArrayList<>();
@@ -131,6 +133,8 @@ public class OIDCController {
                 stateList.add(state);
             }
             session.setAttribute("lti_state", stateList);
+
+//            res.addCookie(new Cookie("SESSION", session.getId()));
 
             log.debug("lti_state in session: {}", session.getAttribute("lti_state"));
             log.debug("Session ID in OIDC Controller: {}", session.getId());

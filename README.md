@@ -98,6 +98,10 @@ application.url=https://localhost:443
 
 Note: Each time you restart ngrok, you will need to change the url of your tool in your registration with the LMS. However, you may restart the tool as much as you like while leaving ngrok running without issue.
 
+## 6: Set Up Local Redis Server
+1. On Mac: `brew install redis`
+2. 
+
 # Build and Run
 
 ## Option 1

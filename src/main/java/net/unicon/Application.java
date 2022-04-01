@@ -12,17 +12,17 @@
  */
 package net.unicon;
 
+import net.unicon.lti.config.RedisConfiguration;
 import net.unicon.lti.config.WebSecurityConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-@SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
-@Import(WebSecurityConfig.class)
+@SpringBootApplication
+@Import({WebSecurityConfig.class, RedisConfiguration.class})
 @EnableScheduling
 public class Application {
 

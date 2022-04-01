@@ -41,6 +41,12 @@ public class LTIDataServiceImpl implements LTIDataService {
     @Autowired
     AllRepositories repos;
 
+    @Value("${spring.redis.host}")
+    private String springRedisHost;
+
+    @Value("${spring.redis.port}")
+    private int springRedisPort;
+
     //This will be used to create the deep links. Needs to be in the application properties.
     @Value("${application.url}")
     private String localUrl;
@@ -340,6 +346,26 @@ public class LTIDataServiceImpl implements LTIDataService {
     @Override
     public LtiMembershipEntity saveLtiMembershipEntity(LtiMembershipEntity ltiMembershipEntity) {
         return repos.members.save(ltiMembershipEntity);
+    }
+
+    @Override
+    public String getSpringRedisHost() {
+        return springRedisHost;
+    }
+
+    @Override
+    public void setSpringRedisHost(String springRedisHost) {
+        this.springRedisHost = springRedisHost;
+    }
+
+    @Override
+    public int getSpringRedisPort() {
+        return springRedisPort;
+    }
+
+    @Override
+    public void setSpringRedisPort(int springRedisPort) {
+        this.springRedisPort = springRedisPort;
     }
 
     @Override

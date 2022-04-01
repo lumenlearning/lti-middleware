@@ -95,6 +95,8 @@ public class OIDCControllerTest {
 
     private Model model = new ExtendedModelMap();
 
+//    private Jedis jedis;
+
     @Configuration
     static class ContextConfiguration {
 
@@ -117,6 +119,9 @@ public class OIDCControllerTest {
         when(platformDeployment2.getDeploymentId()).thenReturn(SAMPLE_DEPLOYMENT_ID2);
         when(platformDeployment1.getOidcEndpoint()).thenReturn(SAMPLE_OIDC_ENDPOINT);
         when(platformDeployment2.getOidcEndpoint()).thenReturn(SAMPLE_OIDC_ENDPOINT);
+
+//        jedis = new Jedis("localhost", 6379);
+//        jedis.flushAll();
 
         try {
             KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
@@ -141,6 +146,10 @@ public class OIDCControllerTest {
         when(platformDeploymentRepository.findByIssAndClientIdAndDeploymentId(any(String.class), any(String.class), any(String.class)))
                 .thenReturn(onePlatformDeployment);
 
+//        // Test Redis is empty before oidc controller is called
+//        Set<String> result = jedis.keys("*");
+//        assertEquals(0, result.size());
+
         String response = oidcController.loginInitiations(req, res, model);
 
         Mockito.verify(platformDeploymentRepository).findByIssAndClientIdAndDeploymentId(eq(SAMPLE_ISS), eq(SAMPLE_CLIENT_ID), eq(SAMPLE_DEPLOYMENT_ID));
@@ -152,6 +161,12 @@ public class OIDCControllerTest {
         Mockito.verify(ltiDataService).getOwnPrivateKey();
 
         validateOAuthResponse(response, SAMPLE_CLIENT_ID, SAMPLE_DEPLOYMENT_ID, SAMPLE_ISS);
+
+//        // Test that session was stored in Redis
+//        Set<String> redisResult = jedis.keys("*");
+//        assertTrue(redisResult.size() > 0); //redis is populated with session data
+//        System.out.println("CONTENTS OF REDIS KEYS");
+//        System.out.println(redisResult.toArray().toString());
     }
 
     @Test

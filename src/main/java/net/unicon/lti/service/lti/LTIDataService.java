@@ -9,7 +9,7 @@ import net.unicon.lti.repository.AllRepositories;
 import net.unicon.lti.utils.lti.LTI3Request;
 import org.springframework.transaction.annotation.Transactional;
 
-public interface LTIDataService {
+public interface LTIDataService  {
     AllRepositories getRepos();
 
     @Transactional
@@ -27,6 +27,14 @@ public interface LTIDataService {
     LtiMembershipEntity findByUserAndContext(LtiUserEntity ltiUserEntity, LtiContextEntity ltiContextEntity);
 
     LtiMembershipEntity saveLtiMembershipEntity(LtiMembershipEntity ltiMembershipEntity);
+
+    String getSpringRedisHost();
+
+    void setSpringRedisHost(String springRedisHost);
+
+    int getSpringRedisPort();
+
+    void setSpringRedisPort(int springRedisPort);
 
     String getLocalUrl();
 
