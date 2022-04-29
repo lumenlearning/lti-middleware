@@ -25,6 +25,7 @@ import net.unicon.lti.utils.TextConstants;
 import net.unicon.lti.utils.lti.LTI3Request;
 import net.unicon.lti.utils.lti.LtiOidcUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.LaxRedirectStrategy;
@@ -40,6 +41,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
 import java.util.List;
 
@@ -65,7 +67,7 @@ public class LTI3Controller {
     private CloseableHttpClient client = HttpClientBuilder.create().setRedirectStrategy(new LaxRedirectStrategy()).build();
 
     @PostMapping(value={"/lti3","/lti3/"}, produces = MediaType.TEXT_HTML_VALUE)
-    public String lti3(HttpServletRequest req, HttpServletResponse res, Model model)  {
+    public String lti3(HttpServletRequest req, HttpServletResponse res, Model model) {
         //First we will get the state, validate it
         String state = req.getParameter("state");
         //We will use this link to find the content to display.
@@ -94,6 +96,9 @@ public class LTI3Controller {
 
                 model.addAttribute("target", target);
                 model.addAttribute("id_token", ltiData);
+            } else if (lti3Request.getLtiMessageType().equals(LtiStrings.LTI_MESSAGE_TYPE_DEEP_LINKING) && ltiDataService.getDeepLinkingEnabled()) {
+                log.debug("Redirecting to: {}", ltiDataService.getLtiReactUiUrl());
+                return "redirect:" + generateDLMenuUrl(lti3Request);
             } else {
                 model.addAttribute("target", ltiDataService.getLocalUrl() + "/demo?link=" + link);
             }
@@ -104,6 +109,9 @@ public class LTI3Controller {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid signature");
         } catch (GeneralSecurityException ex) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error");
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Could not resolve deep linking url");
         }
     }
 
@@ -143,6 +151,17 @@ public class LTI3Controller {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Deep Linking Disabled");
         }
         return "lti3Result";
+    }
+
+    private String generateDLMenuUrl(LTI3Request lti3Request) throws URISyntaxException {
+        URIBuilder uriBuilder = new URIBuilder();
+        uriBuilder.setHost(ltiDataService.getLtiReactUiUrl());
+        uriBuilder.addParameter("iss", lti3Request.getIss());
+        uriBuilder.addParameter("client_id", lti3Request.getAud());
+        uriBuilder.addParameter("deployment_id", lti3Request.getLtiDeploymentId());
+        uriBuilder.addParameter("context_id", lti3Request.getLtiContextId());
+        uriBuilder.addParameter("user_id", lti3Request.getSub());
+        return uriBuilder.build().toString();
     }
 
 }

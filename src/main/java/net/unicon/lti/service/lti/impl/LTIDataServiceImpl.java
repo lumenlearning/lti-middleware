@@ -45,6 +45,9 @@ public class LTIDataServiceImpl implements LTIDataService {
     @Value("${application.url}")
     private String localUrl;
 
+    @Value("${lti-react-ui.url}")
+    private String ltiReactUiUrl;
+
     @Value("${oicd.privatekey}")
     private String ownPrivateKey;
 
@@ -341,6 +344,17 @@ public class LTIDataServiceImpl implements LTIDataService {
     public LtiMembershipEntity saveLtiMembershipEntity(LtiMembershipEntity ltiMembershipEntity) {
         return repos.members.save(ltiMembershipEntity);
     }
+
+    @Override
+    public String getLtiReactUiUrl() {
+        return ltiReactUiUrl;
+    }
+
+    @Override
+    public void setLtiReactUiUrl(String ltiReactUiUrl) {
+        this.ltiReactUiUrl = ltiReactUiUrl;
+    }
+
 
     @Override
     public String getLocalUrl() {

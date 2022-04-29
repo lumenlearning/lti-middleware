@@ -28,6 +28,10 @@ public interface LTIDataService {
 
     LtiMembershipEntity saveLtiMembershipEntity(LtiMembershipEntity ltiMembershipEntity);
 
+    String getLtiReactUiUrl();
+
+    void setLtiReactUiUrl(String ltiReactUiUrl);
+
     String getLocalUrl();
 
     void setLocalUrl(String localUrl);
