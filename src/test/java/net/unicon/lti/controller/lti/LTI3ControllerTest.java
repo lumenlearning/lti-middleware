@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import net.unicon.lti.service.lti.LTIDataService;
 import net.unicon.lti.service.lti.LTIJWTService;
+import net.unicon.lti.utils.LtiStrings;
 import net.unicon.lti.utils.lti.LTI3Request;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -25,6 +26,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -34,6 +36,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 @WebMvcTest(LTI3Controller.class)
@@ -130,6 +135,7 @@ public class LTI3ControllerTest {
             when(lti3Request.getLtiDeploymentId()).thenReturn("deployment-id-1");
             when(ltiDataService.getDemoMode()).thenReturn(false);
             when(lti3Request.getLtiTargetLinkUrl()).thenReturn("https://tool.com/test");
+            when(lti3Request.getLtiMessageType()).thenReturn(LtiStrings.LTI_MESSAGE_TYPE_RESOURCE_LINK);
 
             KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
             kpg.initialize(1024);
@@ -167,6 +173,7 @@ public class LTI3ControllerTest {
             when(lti3Request.getLtiDeploymentId()).thenReturn("deployment-id-1");
             when(ltiDataService.getDemoMode()).thenReturn(false);
             when(lti3Request.getLtiTargetLinkUrl()).thenReturn("https://tool.com/test");
+            when(lti3Request.getLtiMessageType()).thenReturn(LtiStrings.LTI_MESSAGE_TYPE_RESOURCE_LINK);
 
             KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
             kpg.initialize(1024);
@@ -196,6 +203,84 @@ public class LTI3ControllerTest {
     }
 
     @Test
+    public void testLTI3DemoModeOffDeepLinking() {
+        try {
+            when(claims.get("clientId")).thenReturn("client-id-1");
+            when(claims.get("ltiDeploymentId")).thenReturn("deployment-id-1");
+            when(lti3Request.getAud()).thenReturn("client-id-1");
+            when(lti3Request.getLtiDeploymentId()).thenReturn("deployment-id-1");
+            when(ltiDataService.getDemoMode()).thenReturn(false);
+            when(ltiDataService.getDeepLinkingEnabled()).thenReturn(true);
+            when(lti3Request.getLtiTargetLinkUrl()).thenReturn("https://tool.com/test");
+            when(lti3Request.getLtiMessageType()).thenReturn(LtiStrings.LTI_MESSAGE_TYPE_DEEP_LINKING);
+            when(ltiDataService.getLtiReactUiUrl()).thenReturn("reactui.com");
+            when(ltijwtService.generateDLInitializationJWT(eq(lti3Request))).thenReturn("test-dl-jwt");
+
+            KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
+            kpg.initialize(1024);
+            KeyPair kp = kpg.generateKeyPair();
+            Base64.Encoder encoder = Base64.getEncoder();
+            String privateKey = "-----BEGIN PRIVATE KEY-----\n" + encoder.encodeToString(kp.getPrivate().getEncoded()) + "\n-----END PRIVATE KEY-----\n";
+            when(ltiDataService.getOwnPrivateKey()).thenReturn(privateKey);
+            when(lti3Request.getClaims()).thenReturn(claims);
+
+            String response = lti3Controller.lti3(req, res, model);
+
+            Mockito.verify(ltijwtService).validateState(VALID_STATE);
+            Mockito.verify(ltiDataService, times(2)).getDemoMode();
+            Mockito.verify(ltiDataService, times(2)).getLtiReactUiUrl();
+            Mockito.verify(ltijwtService).generateDLInitializationJWT(lti3Request);
+
+            System.out.println("DEEP LINKING RESPONSE");
+            System.out.println(response);
+            assertEquals("redirect://reactui.com?dl_jwt=test-dl-jwt", response);
+        } catch (GeneralSecurityException e) {
+            fail("Exception should not be thrown.");
+        }
+    }
+
+    @Test
+    public void testLTI3DemoModeOffDeepLinkingDisabled() {
+        try {
+            when(claims.get("clientId")).thenReturn("client-id-1");
+            when(claims.get("ltiDeploymentId")).thenReturn("deployment-id-1");
+            when(lti3Request.getAud()).thenReturn("client-id-1");
+            when(lti3Request.getLtiDeploymentId()).thenReturn("deployment-id-1");
+            when(ltiDataService.getDemoMode()).thenReturn(false);
+            when(ltiDataService.getDeepLinkingEnabled()).thenReturn(false);
+            when(lti3Request.getLtiTargetLinkUrl()).thenReturn("https://tool.com/test");
+            when(lti3Request.getLtiMessageType()).thenReturn(LtiStrings.LTI_MESSAGE_TYPE_DEEP_LINKING);
+            when(ltiDataService.getLtiReactUiUrl()).thenReturn("reactui.com");
+            when(ltijwtService.generateDLInitializationJWT(eq(lti3Request))).thenReturn("test-dl-jwt");
+
+            KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
+            kpg.initialize(1024);
+            KeyPair kp = kpg.generateKeyPair();
+            Base64.Encoder encoder = Base64.getEncoder();
+            String privateKey = "-----BEGIN PRIVATE KEY-----\n" + encoder.encodeToString(kp.getPrivate().getEncoded()) + "\n-----END PRIVATE KEY-----\n";
+            when(ltiDataService.getOwnPrivateKey()).thenReturn(privateKey);
+            when(lti3Request.getClaims()).thenReturn(claims);
+
+            ResponseStatusException exception = Assertions.assertThrows(
+                    ResponseStatusException.class,
+                    () -> {lti3Controller.lti3(req, res, model);}
+            );
+
+            assertEquals(exception.getStatus(), HttpStatus.BAD_REQUEST);
+            assertEquals(exception.getReason(), "Deep Linking Disabled");
+
+            Mockito.verify(ltijwtService).validateState(VALID_STATE);
+            Mockito.verify(ltiDataService, times(3)).getDemoMode();
+            Mockito.verify(ltiDataService, never()).getLtiReactUiUrl();
+            Mockito.verify(ltijwtService, never()).generateDLInitializationJWT(lti3Request);
+
+
+        } catch (GeneralSecurityException e) {
+            fail("Exception should not be thrown.");
+        }
+    }
+
+    @Test
     public void testLTI3DemoModeOn() {
         when(claims.get("clientId")).thenReturn("client-id-1");
         when(claims.get("ltiDeploymentId")).thenReturn("deployment-id-1");
@@ -205,7 +290,7 @@ public class LTI3ControllerTest {
 
         String finalResponse = lti3Controller.lti3(req, res, model);
         Mockito.verify(ltijwtService).validateState(VALID_STATE);
-        Mockito.verify(ltiDataService).getDemoMode();
+        Mockito.verify(ltiDataService, times(3)).getDemoMode();
         assertEquals(finalResponse, "lti3Redirect");
     }
 }

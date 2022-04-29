@@ -231,6 +231,9 @@ If using dynamic registration, ensure that the `domain.url` in the `.properties`
 
 `domain.url=https://local.waymaker.xyz`
 
+## Deep Linking to External UI
+If using Deep Linking in non-demo mode, ensure that the `lti-react-ui.url` value is set to the url for the Deep Linking frontend in the `.properties` file. Also ensure that the `lti13.enableDeepLinking` property is set to `true`.
+
 ## Deploying to the Dev/Staging Environment
 
 1. Push changes to the branch that you want to push to the dev environment (e.g. L3-66-integration-testing)

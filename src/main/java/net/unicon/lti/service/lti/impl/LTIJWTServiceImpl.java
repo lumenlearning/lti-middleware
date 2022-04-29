@@ -27,6 +27,7 @@ import net.unicon.lti.model.PlatformDeployment;
 import net.unicon.lti.service.lti.LTIDataService;
 import net.unicon.lti.service.lti.LTIJWTService;
 import net.unicon.lti.utils.TextConstants;
+import net.unicon.lti.utils.lti.LTI3Request;
 import net.unicon.lti.utils.oauth.OAuthUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -155,6 +156,30 @@ public class LTIJWTServiceImpl implements LTIJWTService {
                 .compact();
         log.debug("Token Request: \n {} \n", state);
         return state;
+    }
+
+    @Override
+    public String generateDLInitializationJWT(LTI3Request lti3Request) throws GeneralSecurityException {
+        Date date = new Date();
+        Key toolPrivateKey = OAuthUtils.loadPrivateKey(ltiDataService.getOwnPrivateKey());
+
+        String dlJwt = Jwts.builder()
+                .setHeaderParam("kid", TextConstants.DEFAULT_KID)
+                .setHeaderParam("typ", "JWT")
+                .setIssuer(lti3Request.getIss())
+                .setSubject("Goldilocks")
+                .setAudience(ltiDataService.getLtiReactUiUrl())
+                .setExpiration(DateUtils.addSeconds(date, 3600)) //a java.util.Date
+                .setNotBefore(date) //a java.util.Date
+                .setIssuedAt(date) // for example, now
+                .claim("client_id", lti3Request.getAud())
+                .claim("deployment_id", lti3Request.getLtiDeploymentId())
+                .claim("context_id", lti3Request.getLtiContextId())
+                .claim("user_id", lti3Request.getSub())
+                .signWith(SignatureAlgorithm.RS256, toolPrivateKey)  //We sign it with our own private key. The platform has the public one.
+                .compact();
+        log.debug("DL JWT: \n {} \n", dlJwt);
+        return dlJwt;
     }
 
 }

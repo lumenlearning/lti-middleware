@@ -89,16 +89,18 @@ public class LTI3Controller {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid deployment_id");
             }
 
-            if (!ltiDataService.getDemoMode()) {
+            if (!ltiDataService.getDemoMode() && lti3Request.getLtiMessageType().equals(LtiStrings.LTI_MESSAGE_TYPE_RESOURCE_LINK)) {
                 String target = lti3Request.getLtiTargetLinkUrl();
                 log.debug("Target Link URL: {}", target);
                 String ltiData = LtiOidcUtils.generateLtiToken(lti3Request, ltiDataService);
 
                 model.addAttribute("target", target);
                 model.addAttribute("id_token", ltiData);
-            } else if (lti3Request.getLtiMessageType().equals(LtiStrings.LTI_MESSAGE_TYPE_DEEP_LINKING) && ltiDataService.getDeepLinkingEnabled()) {
+            } else if (!ltiDataService.getDemoMode() && lti3Request.getLtiMessageType().equals(LtiStrings.LTI_MESSAGE_TYPE_DEEP_LINKING) && ltiDataService.getDeepLinkingEnabled()) {
                 log.debug("Redirecting to: {}", ltiDataService.getLtiReactUiUrl());
                 return "redirect:" + generateDLMenuUrl(lti3Request);
+            } else if (!ltiDataService.getDemoMode() && lti3Request.getLtiMessageType().equals(LtiStrings.LTI_MESSAGE_TYPE_DEEP_LINKING) && !ltiDataService.getDeepLinkingEnabled()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Deep Linking Disabled");
             } else {
                 model.addAttribute("target", ltiDataService.getLocalUrl() + "/demo?link=" + link);
             }
@@ -153,14 +155,10 @@ public class LTI3Controller {
         return "lti3Result";
     }
 
-    private String generateDLMenuUrl(LTI3Request lti3Request) throws URISyntaxException {
+    private String generateDLMenuUrl(LTI3Request lti3Request) throws URISyntaxException, GeneralSecurityException {
         URIBuilder uriBuilder = new URIBuilder();
         uriBuilder.setHost(ltiDataService.getLtiReactUiUrl());
-        uriBuilder.addParameter("iss", lti3Request.getIss());
-        uriBuilder.addParameter("client_id", lti3Request.getAud());
-        uriBuilder.addParameter("deployment_id", lti3Request.getLtiDeploymentId());
-        uriBuilder.addParameter("context_id", lti3Request.getLtiContextId());
-        uriBuilder.addParameter("user_id", lti3Request.getSub());
+        uriBuilder.addParameter("dl_jwt", ltijwtService.generateDLInitializationJWT(lti3Request));
         return uriBuilder.build().toString();
     }
 
