@@ -1,4 +1,4 @@
-export const COURSE_ARRAY = [{
+export const STATIC_COURSE_ARRAY = [{
   root_outcome_guid: "0a990cb3-8cde-4e9b-a99a-b4caaea82eee",
   book_title: "Human Resources Management - F19",
   release_date: "2022-01-18T18:27:53.084Z",
@@ -274,6 +274,14 @@ export const COURSE_ARRAY = [{
             "Putting It Together",
             "Quiz Prep"
         ]
+    },
+    {
+        name: null,
+        sub_topics: null
+    },
+    {
+        name: null,
+        sub_topics: []
     }
 ]
 }];

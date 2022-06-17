@@ -20,6 +20,7 @@ import net.unicon.lti.model.LtiLinkEntity;
 import net.unicon.lti.repository.LtiLinkRepository;
 import net.unicon.lti.service.lti.LTIDataService;
 import net.unicon.lti.service.lti.LTIJWTService;
+import net.unicon.lti.service.waymaker.WaymakerService;
 import net.unicon.lti.utils.LtiStrings;
 import net.unicon.lti.utils.TextConstants;
 import net.unicon.lti.utils.lti.LTI3Request;
@@ -37,6 +38,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ResponseStatusException;
+
+import com.nimbusds.jose.shaded.json.JSONArray;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -59,6 +62,9 @@ public class LTI3Controller {
 
     @Autowired
     LTIDataService ltiDataService;
+
+    @Autowired
+    WaymakerService waymakerService;
 
     LTI3Request lti3Request;
 
@@ -101,6 +107,8 @@ public class LTI3Controller {
             // When the LTI message type is deep linking we must to display the React UI to select courses from waymaker. 
             if (LtiStrings.LTI_MESSAGE_TYPE_DEEP_LINKING.equals(lti3Request.getLtiMessageType())) {
                 if (ltiDataService.getDeepLinkingEnabled()) {
+                    // We convert the JSON response to a Java object, and send the JSON value again to the frontend.
+                    model.addAttribute("waymakerCourses", JSONArray.toJSONString(waymakerService.fetchWaymakerCourses()));
                     // This redirects to the REACT UI which is a secondary set of templates.
                     return TextConstants.REACT_UI_TEMPLATE;
                 } else {

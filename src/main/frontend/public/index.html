@@ -11,6 +11,7 @@
     <script>
         <!--/* These values are bound to Thymeleaf variables, they are set in the backend controller and filled in the client side in the render. */-->
         const ltiLaunchData = {
+          courseArray: [(${waymakerCourses})],
           id_token: '[[${id_token}]]',
           target: '[[${target}]]'
         };

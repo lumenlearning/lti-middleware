@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import net.unicon.lti.service.lti.LTIDataService;
 import net.unicon.lti.service.lti.LTIJWTService;
+import net.unicon.lti.service.waymaker.WaymakerService;
 import net.unicon.lti.utils.LtiStrings;
 import net.unicon.lti.utils.TextConstants;
 import net.unicon.lti.utils.lti.LTI3Request;
@@ -30,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Base64;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -51,6 +53,9 @@ public class LTI3ControllerTest {
 
     @MockBean
     private LTIDataService ltiDataService;
+
+    @MockBean
+    private WaymakerService waymakerService;
 
     @Mock
     private HttpServletRequest req;
@@ -220,6 +225,7 @@ public class LTI3ControllerTest {
             when(lti3Request.getLtiDeploymentId()).thenReturn("deployment-id-1");
             when(ltiDataService.getDemoMode()).thenReturn(false);
             when(lti3Request.getLtiTargetLinkUrl()).thenReturn("https://tool.com/test");
+            when(waymakerService.fetchWaymakerCourses()).thenReturn(new ArrayList<>());
 
             // Set the message type to Deep Linking
             when(lti3Request.getLtiMessageType()).thenReturn(LtiStrings.LTI_MESSAGE_TYPE_DEEP_LINKING);
