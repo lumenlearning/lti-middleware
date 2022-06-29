@@ -29,10 +29,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
-import net.unicon.lti.model.harmony.HarmonyCourse;
-
-import java.util.ArrayList;
-import java.util.List;
+import net.unicon.lti.model.harmony.HarmonyPageResponse;
 
 /**
  * This manages all the interactions with Harmony
@@ -49,11 +46,11 @@ public class HarmonyService {
     @Value("${harmony.courses.jwt}")
     private String harmonyJWT;
 
-    public List<HarmonyCourse> fetchHarmonyCourses() {
+    public HarmonyPageResponse fetchHarmonyCourses() {
 
         if (StringUtils.isAnyBlank(harmonyCoursesApiUrl, harmonyJWT)) {
             log.warn("The Harmony Courses API has not been configured, courses will not be fetched.");
-            return new ArrayList<>();
+            return null;
         }
 
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
@@ -71,14 +68,14 @@ public class HarmonyService {
             try (CloseableHttpResponse apiResponse = httpClient.execute(httpGet)) {
                 if (HttpStatus.SC_OK == apiResponse.getStatusLine().getStatusCode()) {
                     HttpEntity entity = apiResponse.getEntity();
-                    return jsonObjectMapper.readValue(entity.getContent(), new TypeReference<List<HarmonyCourse>>(){});
+                    return jsonObjectMapper.readValue(entity.getContent(), new TypeReference<HarmonyPageResponse>(){});
                 }
             }
         } catch(Exception ex) {
             log.error("Error fetching courses from the Harmony Courses API: {} ", ex.getMessage());
         }
 
-        return new ArrayList<>();
+        return null;
 
     }
 

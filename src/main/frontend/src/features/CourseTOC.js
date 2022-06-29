@@ -3,7 +3,8 @@ import CourseTopic from './CourseTopic';
 
 function CourseTOC (props) {
 
-  if (!props.topics || props.topics.length === 0) {
+  // The table of contents object could be null, empty array or empty object.
+  if (!props.topics || Object.keys(props.topics).length === 0 || props.topics.length === 0) {
     return <Alert>This course does not have topics.</Alert>;
   }
 

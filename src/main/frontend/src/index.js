@@ -25,6 +25,7 @@ const ltiLaunchData = JSON.parse(roolElement.getAttribute('lti-launch-data'));
 const initialState = {
   courseArray: [],
   filteredCourseArray: [],
+  metadata: {},
   searchInputText: '',
   selectedCourse: null,
   deploymentId: ltiLaunchData.deploymentId,

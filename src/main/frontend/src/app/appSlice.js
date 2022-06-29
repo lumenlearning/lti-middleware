@@ -1,12 +1,20 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { COURSE_ARRAY } from './staticData.js';
 
-// Static data
-import { STATIC_COURSE_ARRAY } from './staticData';
+// This defines the initial state of the store
+const initialState = {
+  searchInputText: '',
+  selectedCategoriesArray: [],
+  selectedCourse: null,
+  courseArray: COURSE_ARRAY
+};
 
 // This defines the store slice
 export const appSlice = createSlice({
   // Name of the slice
   name: 'appSlice',
+  // Initial state
+  initialState,
   // A reducer is a function that takes the state and the action and defines the next state
   // In the example defines what happens when the category selection changes.
   reducers: {
@@ -16,13 +24,28 @@ export const appSlice = createSlice({
     setCourseArray: (state, action) => {
       state.courseArray = state.filteredCourseArray = action.payload;
     },
+    updateMetadata: (state, action) => {
+      state.metadata = action.payload;
+    },
     changeSearchInput: (state, action) => {
+      debugger;
       const searchInputText = action.payload;
       state.searchInputText = searchInputText;
       // This filters courses depending on the text input value.
-      state.filteredCourseArray = state.courseArray.slice().filter((course) => {
+      state.courseArray = COURSE_ARRAY.slice().filter((course) => {
         return searchInputText === '' || (course.book_title && course.book_title.toLowerCase().includes(searchInputText.toLowerCase()))
       });
+    },
+    changeCategoryInput: (state, action) => {
+      const isChecked = action.payload.checked;
+      const value = action.payload.value;
+      let newSelectedCategoriesArray = state.selectedCategoriesArray.slice();
+      if (isChecked) {
+        newSelectedCategoriesArray.push(value);
+      } else {
+        newSelectedCategoriesArray = state.selectedCategoriesArray.slice().filter(item => item !== value);
+      }
+      state.selectedCategoriesArray = newSelectedCategoriesArray;
     },
     changeSelectedCourse: (state, action) => {
       state.selectedCourse = action.payload;
@@ -31,7 +54,7 @@ export const appSlice = createSlice({
 });
 
 // Defines the actions that can be dispatched using dispatch and defines what happens with the state.
-export const { changeSearchInput, changeSelectedCourse, setLoading, setCourseArray } = appSlice.actions;
+export const { changeSearchInput, changeSelectedCourse, setLoading, setCourseArray, updateMetadata } = appSlice.actions;
 // Connects variables to the state, when you want the state values in a component use this.
 export const selectSearchInputText = (state) => state.searchInputText;
 export const selectSelectedCourse = (state) => state.selectedCourse;
@@ -55,10 +78,14 @@ export const fetchCourses = () => (dispatch) => {
     return response.json();
   }).then(json => {
     // Load the first batch of courses from the backend when the request has been resolved.
-    dispatch(setCourseArray(json));
+    dispatch(setCourseArray(json.records));
+    // Load the pagination information for the first page.
+    dispatch(updateMetadata(json.metadata));
   }).catch(reason => {
     // For local development, if the data is empty we can use static data.
-    dispatch(setCourseArray(STATIC_COURSE_ARRAY));
+    dispatch(setCourseArray(STATIC_COURSE_ARRAY.records));
+    // Load the pagination information for the first page.
+    dispatch(updateMetadata(STATIC_COURSE_ARRAY.metadata));
     console.error(reason);
   }).finally(() => {
     // Remove the spinner once the request has been resolved.

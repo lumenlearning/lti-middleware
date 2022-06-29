@@ -16,10 +16,12 @@ function CoursePicker (props) {
   const courseArray = useSelector(selectCourseArray);
   const isLoading = useSelector(selectLoading);
 
-  // Display a spinner when courses are loading---
-  let courseGrid = <Spinner animation="border" role="status" >
-                     <span className="visually-hidden">Loading Courses...</span>
-                   </Spinner>;
+  // Display a spinner when courses are loading...
+  const loadingCoursesText = 'Loading courses...';
+  let courseGrid = (<>
+                    <Spinner animation="border" role="status"><span className="visually-hidden">{loadingCoursesText}</span></Spinner>
+                    <p className="text-dark">{loadingCoursesText}</p>
+                   </>);
 
   if (!isLoading) {
     courseGrid = <CourseGrid courses={courseArray} />;
