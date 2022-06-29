@@ -2,6 +2,8 @@ import { createSlice } from '@reduxjs/toolkit';
 
 // Static data
 import { STATIC_COURSE_ARRAY } from './staticData';
+import { STATIC_COURSE_ARRAY_2 } from './staticData2';
+import { STATIC_COURSE_ARRAY_3 } from './staticData3';
 
 // This defines the store slice
 export const appSlice = createSlice({
@@ -39,6 +41,7 @@ export const { changeSearchInput, changeSelectedCourse, setLoading, setCourseArr
 export const selectSearchInputText = (state) => state.searchInputText;
 export const selectSelectedCourse = (state) => state.selectedCourse;
 export const selectCourseArray = (state) => state.filteredCourseArray;
+export const selectMetadata = (state) => state.metadata;
 export const selectIss = (state) => state.iss;
 export const selectContext = (state) => state.context;
 export const selectClientId = (state) => state.clientId;
@@ -46,11 +49,26 @@ export const selectDeploymentId = (state) => state.deploymentId;
 export const selectIdToken = (state) => state.id_token;
 export const selectLoading = (state) => state.loading;
 
+// This is just an static function to simulate paging while doing local development.
+const returnMockPage = (page) => {
+  switch (page) {
+    case 3:
+      return STATIC_COURSE_ARRAY_3;
+    case 2:
+      return STATIC_COURSE_ARRAY_2;
+    case 1:
+    default:
+      return STATIC_COURSE_ARRAY;
+  }
+}
+
 // This function fetches the courses from the backend, it should be invoked when loading the application.
-export const fetchCourses = () => (dispatch) => {
+export const fetchCourses = (page) => (dispatch) => {
+  // If no specific page is requested, request the first one.
+  const requestedPage = page ? page : 1;
   // We must display an spinner when loading courses from the backend
   dispatch(setLoading(true));
-  fetch('/harmony/courses')
+  fetch(`/harmony/courses?page=${requestedPage}`)
   .then(response => {
     if (!response.ok) {
       throw new Error(`Problem fetching courses (status: ${response.status})`);
@@ -62,10 +80,11 @@ export const fetchCourses = () => (dispatch) => {
     // Load the pagination information for the first page.
     dispatch(updateMetadata(json.metadata));
   }).catch(reason => {
+    const staticCourseArray = returnMockPage(requestedPage);
     // For local development, if the data is empty we can use static data.
-    dispatch(setCourseArray(STATIC_COURSE_ARRAY.records));
+    dispatch(setCourseArray(staticCourseArray.records));
     // Load the pagination information for the first page.
-    dispatch(updateMetadata(STATIC_COURSE_ARRAY.metadata));
+    dispatch(updateMetadata(staticCourseArray.metadata));
     console.error(reason);
   }).finally(() => {
     // Remove the spinner once the request has been resolved.

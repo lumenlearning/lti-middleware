@@ -38,49 +38,49 @@ public class HarmonyServiceTest {
     public void testNullCredentials() {
         ReflectionTestUtils.setField(harmonyService, "harmonyCoursesApiUrl", null);
         ReflectionTestUtils.setField(harmonyService, "harmonyJWT", null);
-        assertEquals(harmonyService.fetchHarmonyCourses(), null);
+        assertEquals(harmonyService.fetchHarmonyCourses(1), null);
     }
 
     @Test
     public void testEmptyCredentials() {
         ReflectionTestUtils.setField(harmonyService, "harmonyCoursesApiUrl", "");
         ReflectionTestUtils.setField(harmonyService, "harmonyJWT", "");
-        assertEquals(harmonyService.fetchHarmonyCourses(), null);
+        assertEquals(harmonyService.fetchHarmonyCourses(1), null);
     }
 
     @Test
     public void testNullUrl() {
         ReflectionTestUtils.setField(harmonyService, "harmonyCoursesApiUrl", null);
         ReflectionTestUtils.setField(harmonyService, "harmonyJWT", "nonnull");
-        assertEquals(harmonyService.fetchHarmonyCourses(), null);
+        assertEquals(harmonyService.fetchHarmonyCourses(1), null);
     }
 
     @Test
     public void testNullToken() {
         ReflectionTestUtils.setField(harmonyService, "harmonyCoursesApiUrl", "nonnull");
         ReflectionTestUtils.setField(harmonyService, "harmonyJWT", null);
-        assertEquals(harmonyService.fetchHarmonyCourses(), null);
+        assertEquals(harmonyService.fetchHarmonyCourses(1), null);
     }
 
     @Test
     public void testEmptyUrl() {
         ReflectionTestUtils.setField(harmonyService, "harmonyCoursesApiUrl", "");
         ReflectionTestUtils.setField(harmonyService, "harmonyJWT", "nonnull");
-        assertEquals(harmonyService.fetchHarmonyCourses(), null);
+        assertEquals(harmonyService.fetchHarmonyCourses(1), null);
     }
 
     @Test
     public void testEmptyToken() {
         ReflectionTestUtils.setField(harmonyService, "harmonyCoursesApiUrl", "nonnull");
         ReflectionTestUtils.setField(harmonyService, "harmonyJWT", "");
-        assertEquals(harmonyService.fetchHarmonyCourses(), null);
+        assertEquals(harmonyService.fetchHarmonyCourses(1), null);
     }
 
     @Test
     public void testNotValidURL() {
         ReflectionTestUtils.setField(harmonyService, "harmonyCoursesApiUrl", "notvalid");
         ReflectionTestUtils.setField(harmonyService, "harmonyJWT", "nonnull");
-        assertEquals(harmonyService.fetchHarmonyCourses(), null);
+        assertEquals(harmonyService.fetchHarmonyCourses(1), null);
     }
 
     @Test
@@ -91,7 +91,7 @@ public class HarmonyServiceTest {
            .respond(response().withStatusCode(401));
         ReflectionTestUtils.setField(harmonyService, "harmonyCoursesApiUrl", MOCK_SERVER_URL);
         ReflectionTestUtils.setField(harmonyService, "harmonyJWT", "nonnull");
-        assertEquals(harmonyService.fetchHarmonyCourses(), null);
+        assertEquals(harmonyService.fetchHarmonyCourses(1), null);
     }
 
     @Test
@@ -102,7 +102,7 @@ public class HarmonyServiceTest {
             .respond(response().withStatusCode(400));
         ReflectionTestUtils.setField(harmonyService, "harmonyCoursesApiUrl", MOCK_SERVER_URL);
         ReflectionTestUtils.setField(harmonyService, "harmonyJWT", "nonnull");
-        assertEquals(harmonyService.fetchHarmonyCourses(), null);
+        assertEquals(harmonyService.fetchHarmonyCourses(1), null);
     }
 
     @Test
@@ -117,7 +117,7 @@ public class HarmonyServiceTest {
                 .withBody(jsonResponse));
         ReflectionTestUtils.setField(harmonyService, "harmonyCoursesApiUrl", MOCK_SERVER_URL);
         ReflectionTestUtils.setField(harmonyService, "harmonyJWT", "nonnull");
-        HarmonyPageResponse harmonyResponse = harmonyService.fetchHarmonyCourses();  
+        HarmonyPageResponse harmonyResponse = harmonyService.fetchHarmonyCourses(1);  
         assertEquals(harmonyResponse, null);
     }
 
@@ -133,7 +133,7 @@ public class HarmonyServiceTest {
                 .withBody(jsonResponse));
         ReflectionTestUtils.setField(harmonyService, "harmonyCoursesApiUrl", MOCK_SERVER_URL);
         ReflectionTestUtils.setField(harmonyService, "harmonyJWT", "nonnull");
-        HarmonyPageResponse harmonyResponse = harmonyService.fetchHarmonyCourses(); 
+        HarmonyPageResponse harmonyResponse = harmonyService.fetchHarmonyCourses(1); 
         assertNotEquals(harmonyResponse, null);
         assertEquals(harmonyResponse.getRecords().size(), 1);
         assertEquals(harmonyResponse.getRecords().get(0).getRoot_outcome_guid(), "root");

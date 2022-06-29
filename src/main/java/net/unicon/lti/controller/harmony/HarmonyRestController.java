@@ -18,18 +18,17 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
 import net.unicon.lti.model.PlatformDeployment;
-import net.unicon.lti.model.harmony.HarmonyCourse;
 import net.unicon.lti.model.harmony.HarmonyPageResponse;
 import net.unicon.lti.repository.PlatformDeploymentRepository;
 import net.unicon.lti.service.harmony.HarmonyService;
 import net.unicon.lti.utils.LtiStrings;
 
 import java.security.Principal;
-import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -48,7 +47,9 @@ public class HarmonyRestController {
     PlatformDeploymentRepository platformDeploymentRepository;
 
     @RequestMapping(value = "/courses")
-    public ResponseEntity<HarmonyPageResponse> fetchHarmonyCourses(HttpServletRequest req, Principal principal) {
+    public ResponseEntity<HarmonyPageResponse> fetchHarmonyCourses( HttpServletRequest req, Principal principal, @RequestParam int page ) {
+
+        log.debug("The requested harmony page is {}", page);
 
         //To keep this endpoint secured, we will only allow access to the course/platform stored in the session.
         HttpSession session = req.getSession();
@@ -60,7 +61,7 @@ public class HarmonyRestController {
             if (platformDeployment.isPresent()) {
                 log.debug("The deploymentId is present in the repository, fetching courses....");
                 // We convert the JSON response to a Java object, and send the JSON value again to the frontend.
-                return ResponseEntity.ok(harmonyService.fetchHarmonyCourses());
+                return ResponseEntity.ok(harmonyService.fetchHarmonyCourses(page));
             }
         }
         log.debug("No permissions to fetch courses from Harmony");

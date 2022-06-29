@@ -46,7 +46,10 @@ public class HarmonyService {
     @Value("${harmony.courses.jwt}")
     private String harmonyJWT;
 
-    public HarmonyPageResponse fetchHarmonyCourses() {
+    /*
+     * Fetches Courses from the Harmony endpoint performing a request.
+     */
+    public HarmonyPageResponse fetchHarmonyCourses(int page) {
 
         if (StringUtils.isAnyBlank(harmonyCoursesApiUrl, harmonyJWT)) {
             log.warn("The Harmony Courses API has not been configured, courses will not be fetched.");
@@ -56,6 +59,9 @@ public class HarmonyService {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             // Build the URL
             URIBuilder builder = new URIBuilder(harmonyCoursesApiUrl);
+            // Add the page parameter since this API is paginated.
+            builder.setParameter("page", String.valueOf(page));
+            log.debug("Requesting URL {}", builder.build().toString());
             // Build the GET object
             HttpGet httpGet = new HttpGet(builder.build());
             httpGet.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + harmonyJWT);
@@ -76,7 +82,6 @@ public class HarmonyService {
         }
 
         return null;
-
     }
 
 }

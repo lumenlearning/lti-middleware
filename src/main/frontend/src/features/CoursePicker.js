@@ -5,6 +5,7 @@ import { selectCourseArray, selectLoading } from '../app/appSlice';
 // Components import
 import Col from 'react-bootstrap/Col';
 import CourseGrid from './CourseGrid';
+import CoursePaginator from './CoursePaginator';
 import Header from './Header';
 import Row from 'react-bootstrap/Row';
 import SearchInput from './controls/SearchInput';
@@ -43,6 +44,11 @@ function CoursePicker (props) {
       <Row sm={3} xs={2} xxs={1} className="g-3 course-grid">
         {courseGrid}
       </Row>
+      <div className="paginator">
+        <Row>
+          <CoursePaginator />
+        </Row>
+      </div>
     </>
   );
 

@@ -1,8 +1,8 @@
-export const STATIC_COURSE_ARRAY = {
+export const STATIC_COURSE_ARRAY_3 = {
     records: [
       {
         root_outcome_guid: "0a990cb3-8cde-4e9b-a99a-b4caaea82eee1",
-        book_title: "Abnormal Psychology",
+        book_title: "33333Abnormal Psychology",
         release_date: "2022-01-18T18:27:53.084Z",
         cover_img_url: "example.com",
         category: "testing",
@@ -2867,7 +2867,7 @@ export const STATIC_COURSE_ARRAY = {
       ]}
     ],
     metadata: {
-        page: "1",
+        page: "3",
         per_page: "10",
         page_count: 3,
         total_count: 30,
