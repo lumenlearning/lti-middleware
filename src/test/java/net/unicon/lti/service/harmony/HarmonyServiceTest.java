@@ -47,42 +47,42 @@ public class HarmonyServiceTest {
     public void testNullCredentials() {
         ReflectionTestUtils.setField(harmonyService, "harmonyCoursesApiUrl", null);
         ReflectionTestUtils.setField(harmonyService, "harmonyJWT", null);
-        assertNull(harmonyService.fetchHarmonyCourses());
+        assertNull(harmonyService.fetchHarmonyCourses(1));
     }
 
     @Test
     public void testEmptyCredentials() {
         ReflectionTestUtils.setField(harmonyService, "harmonyCoursesApiUrl", "");
         ReflectionTestUtils.setField(harmonyService, "harmonyJWT", "");
-        assertNull(harmonyService.fetchHarmonyCourses());
+        assertNull(harmonyService.fetchHarmonyCourses(1));
     }
 
     @Test
     public void testNullUrl() {
         ReflectionTestUtils.setField(harmonyService, "harmonyCoursesApiUrl", null);
         ReflectionTestUtils.setField(harmonyService, "harmonyJWT", "nonnull");
-        assertNull(harmonyService.fetchHarmonyCourses());
+        assertNull(harmonyService.fetchHarmonyCourses(1));
     }
 
     @Test
     public void testNullToken() {
         ReflectionTestUtils.setField(harmonyService, "harmonyCoursesApiUrl", "nonnull");
         ReflectionTestUtils.setField(harmonyService, "harmonyJWT", null);
-        assertNull(harmonyService.fetchHarmonyCourses());
+        assertNull(harmonyService.fetchHarmonyCourses(1));
     }
 
     @Test
     public void testEmptyUrl() {
         ReflectionTestUtils.setField(harmonyService, "harmonyCoursesApiUrl", "");
         ReflectionTestUtils.setField(harmonyService, "harmonyJWT", "nonnull");
-        assertNull(harmonyService.fetchHarmonyCourses());
+        assertNull(harmonyService.fetchHarmonyCourses(1));
     }
 
     @Test
     public void testEmptyToken() {
         ReflectionTestUtils.setField(harmonyService, "harmonyCoursesApiUrl", "nonnull");
         ReflectionTestUtils.setField(harmonyService, "harmonyJWT", "");
-        assertNull(harmonyService.fetchHarmonyCourses());
+        assertNull(harmonyService.fetchHarmonyCourses(1));
     }
 
     @Test
@@ -91,7 +91,7 @@ public class HarmonyServiceTest {
         ReflectionTestUtils.setField(harmonyService, "harmonyJWT", "nonnull");
         ResponseEntity<HarmonyPageResponse> responseEntity = new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         when(restTemplate.exchange(eq("notvalid"), eq(HttpMethod.GET), any(HttpEntity.class), eq(HarmonyPageResponse.class))).thenReturn(responseEntity);
-        assertNull(harmonyService.fetchHarmonyCourses());
+        assertNull(harmonyService.fetchHarmonyCourses(1));
     }
 
     @Test
@@ -102,7 +102,7 @@ public class HarmonyServiceTest {
         ResponseEntity<HarmonyPageResponse> responseEntity = new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
         when(restTemplate.exchange(eq(MOCK_SERVER_URL), eq(HttpMethod.GET), any(HttpEntity.class), eq(HarmonyPageResponse.class))).thenReturn(responseEntity);
 
-        assertNull(harmonyService.fetchHarmonyCourses());
+        assertNull(harmonyService.fetchHarmonyCourses(1));
     }
 
     @Test
@@ -113,7 +113,7 @@ public class HarmonyServiceTest {
         ResponseEntity<HarmonyPageResponse> responseEntity = new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         when(restTemplate.exchange(eq(MOCK_SERVER_URL), eq(HttpMethod.GET), any(HttpEntity.class), eq(HarmonyPageResponse.class))).thenReturn(responseEntity);
 
-        assertNull(harmonyService.fetchHarmonyCourses());
+        assertNull(harmonyService.fetchHarmonyCourses(1));
     }
 
     @Test
@@ -122,7 +122,7 @@ public class HarmonyServiceTest {
         ReflectionTestUtils.setField(harmonyService, "harmonyJWT", "nonnull");
 
         when(restTemplate.exchange(eq(MOCK_SERVER_URL), eq(HttpMethod.GET), any(HttpEntity.class), eq(HarmonyPageResponse.class))).thenThrow(new HttpMessageNotReadableException("JSON not able to be parsed", new MockHttpInputMessage("[{\"not\": \"root\",\"valid\": \"Root\",\"schema\": null}]".getBytes(StandardCharsets.UTF_8))));
-        assertNull(harmonyService.fetchHarmonyCourses());
+        assertNull(harmonyService.fetchHarmonyCourses(1));
     }
 
     @Test
@@ -148,7 +148,7 @@ public class HarmonyServiceTest {
         ResponseEntity<HarmonyPageResponse> responseEntity = new ResponseEntity<>(harmonyPageResponse, HttpStatus.OK);
         when(restTemplate.exchange(eq(MOCK_SERVER_URL), eq(HttpMethod.GET), any(HttpEntity.class), eq(HarmonyPageResponse.class))).thenReturn(responseEntity);
 
-        HarmonyPageResponse serviceResponse = harmonyService.fetchHarmonyCourses();
+        HarmonyPageResponse serviceResponse = harmonyService.fetchHarmonyCourses(1);
         assertNotNull(serviceResponse);
         assertEquals(serviceResponse.getRecords().size(), 1);
         assertEquals(serviceResponse.getRecords().get(0).getRoot_outcome_guid(), "root");
