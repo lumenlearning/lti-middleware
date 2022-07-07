@@ -1,12 +1,16 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { COURSE_ARRAY } from './staticData.js';
+import { STATIC_COURSE_ARRAY } from './staticData.js';
+
+// Parse the LtiLaunchData JSON object from the root attribute.
+const ltiLaunchData = JSON.parse(document.getElementById('root').getAttribute('lti-launch-data'));
 
 // This defines the initial state of the store
 const initialState = {
   searchInputText: '',
   selectedCategoriesArray: [],
   selectedCourse: null,
-  courseArray: COURSE_ARRAY
+  courseArray: STATIC_COURSE_ARRAY,
+  id_token: ltiLaunchData.id_token
 };
 
 // This defines the store slice
@@ -32,7 +36,7 @@ export const appSlice = createSlice({
       const searchInputText = action.payload;
       state.searchInputText = searchInputText;
       // This filters courses depending on the text input value.
-      state.courseArray = COURSE_ARRAY.slice().filter((course) => {
+      state.courseArray = STATIC_COURSE_ARRAY.slice().filter((course) => {
         return searchInputText === '' || (course.book_title && course.book_title.toLowerCase().includes(searchInputText.toLowerCase()))
       });
     },
@@ -70,7 +74,10 @@ export const selectLoading = (state) => state.loading;
 export const fetchCourses = () => (dispatch) => {
   // We must display an spinner when loading courses from the backend
   dispatch(setLoading(true));
-  fetch('/harmony/courses')
+  fetch('/harmony/courses', {
+    method: 'GET',
+    headers: {'lti-id-token': initialState.id_token}
+  })
   .then(response => {
     if (!response.ok) {
       throw new Error(`Problem fetching courses (status: ${response.status})`);
