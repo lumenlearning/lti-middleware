@@ -11,8 +11,6 @@ const initialState = {
 export const appSlice = createSlice({
   // Name of the slice
   name: 'appSlice',
-  // Initial state
-  initialState,
   // A reducer is a function that takes the state and the action and defines the next state
   // In the example defines what happens when the category selection changes.
   reducers: {
