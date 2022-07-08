@@ -1,16 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { STATIC_COURSE_ARRAY } from './staticData.js';
-
-// Parse the LtiLaunchData JSON object from the root attribute.
-const ltiLaunchData = JSON.parse(document.getElementById('root').getAttribute('lti-launch-data'));
 
 // This defines the initial state of the store
 const initialState = {
   searchInputText: '',
   selectedCategoriesArray: [],
-  selectedCourse: null,
-  courseArray: STATIC_COURSE_ARRAY,
-  id_token: ltiLaunchData.id_token
+  selectedCourse: null
 };
 
 // This defines the store slice
@@ -32,24 +26,12 @@ export const appSlice = createSlice({
       state.metadata = action.payload;
     },
     changeSearchInput: (state, action) => {
-      debugger;
       const searchInputText = action.payload;
       state.searchInputText = searchInputText;
       // This filters courses depending on the text input value.
-      state.courseArray = STATIC_COURSE_ARRAY.slice().filter((course) => {
+      state.filteredCourseArray = state.courseArray.slice().filter((course) => {
         return searchInputText === '' || (course.book_title && course.book_title.toLowerCase().includes(searchInputText.toLowerCase()))
       });
-    },
-    changeCategoryInput: (state, action) => {
-      const isChecked = action.payload.checked;
-      const value = action.payload.value;
-      let newSelectedCategoriesArray = state.selectedCategoriesArray.slice();
-      if (isChecked) {
-        newSelectedCategoriesArray.push(value);
-      } else {
-        newSelectedCategoriesArray = state.selectedCategoriesArray.slice().filter(item => item !== value);
-      }
-      state.selectedCategoriesArray = newSelectedCategoriesArray;
     },
     changeSelectedCourse: (state, action) => {
       state.selectedCourse = action.payload;
@@ -71,12 +53,12 @@ export const selectIdToken = (state) => state.id_token;
 export const selectLoading = (state) => state.loading;
 
 // This function fetches the courses from the backend, it should be invoked when loading the application.
-export const fetchCourses = () => (dispatch) => {
+export const fetchCourses = (state) => (dispatch) => {
   // We must display an spinner when loading courses from the backend
   dispatch(setLoading(true));
   fetch('/harmony/courses', {
     method: 'GET',
-    headers: {'lti-id-token': initialState.id_token}
+    headers: {'lti-id-token': state.id_token}
   })
   .then(response => {
     if (!response.ok) {
@@ -90,9 +72,9 @@ export const fetchCourses = () => (dispatch) => {
     dispatch(updateMetadata(json.metadata));
   }).catch(reason => {
     // For local development, if the data is empty we can use static data.
-    dispatch(setCourseArray(STATIC_COURSE_ARRAY.records));
+    dispatch(setCourseArray(state.courseArray.records));
     // Load the pagination information for the first page.
-    dispatch(updateMetadata(STATIC_COURSE_ARRAY.metadata));
+    dispatch(updateMetadata(state.courseArray.metadata));
     console.error(reason);
   }).finally(() => {
     // Remove the spinner once the request has been resolved.

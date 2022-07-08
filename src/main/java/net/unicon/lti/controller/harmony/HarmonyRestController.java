@@ -50,7 +50,7 @@ public class HarmonyRestController {
             // We convert the JSON response to a Java object, and send the JSON value again to the frontend.
             return ResponseEntity.ok(harmonyService.fetchHarmonyCourses());
         } catch (Exception e) {
-            e.printStackTrace();
+            log.debug(e.getMessage());
             log.debug("No permissions to fetch courses from Harmony");
             return ResponseEntity.status(403).build();
         }
