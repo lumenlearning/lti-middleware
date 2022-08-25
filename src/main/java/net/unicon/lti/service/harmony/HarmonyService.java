@@ -76,7 +76,7 @@ public class HarmonyService {
 
             HttpHeaders headers = new HttpHeaders();
             headers.setBearerAuth(harmonyJWT);
-            HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
+            HttpEntity<String> entity = new HttpEntity<>(headers);
             ResponseEntity<HarmonyPageResponse> response = restTemplate.exchange(requestUrl, HttpMethod.GET, entity, HarmonyPageResponse.class);
             if (response.getStatusCode().is2xxSuccessful()) {
                 return response.getBody();
