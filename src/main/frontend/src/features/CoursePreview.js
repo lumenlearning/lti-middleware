@@ -125,15 +125,13 @@ function CoursePreview(props) {
         form.submit();
       }).catch(reason => {
         setErrorAddingLinks(true);
+        // Remove the spinner once the request has responded with an error, otherwise the LMS will close the modal.
+        setFetchingDeepLinks(false);
+        // Notify other components that the request has been completed with an error.
+        dispatch(setIsFetchingDeepLinks(false));
       }).finally( () => {
-
         // The window will never notice if the user is browsing in long contents or not, should always scroll to top when navigating across courses.
         window.scrollTo(0, 0);
-
-        // Remove the spinner once the request has responded.
-        setFetchingDeepLinks(false);
-        // Notify other components that the request has been completed.
-        dispatch(setIsFetchingDeepLinks(false));
       });
   }
 
