@@ -191,7 +191,7 @@ public class RegistrationServiceTest {
     }
 
     @Test
-    public void testGenerateToolConfiguration() {
+    public void testGenerateToolConfigurationGoldilocks() {
         ReflectionTestUtils.setField(registrationService, DOMAIN_URL, "https://fake-goldilocks.com");
         PlatformRegistrationDTO platformRegistration = new PlatformRegistrationDTO();
         List<String> customClaims = List.of("custom-claim-1", "custom-claim-2");
