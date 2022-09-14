@@ -214,7 +214,7 @@ public class RegistrationServiceTest {
         assertEquals(SAMPLE_CLIENT_NAME, toolRegistration.getClient_name());
         assertEquals(SAMPLE_LOCAL_URL + "/jwks/jwk", toolRegistration.getJwks_uri());
         ToolConfigurationDTO toolConfiguration = toolRegistration.getToolConfiguration();
-        assertEquals(SAMPLE_DOMAIN_URL, toolConfiguration.getDomain());
+        assertEquals("https://fake-goldilocks.com", toolConfiguration.getDomain());
         assertEquals(SAMPLE_LOCAL_URL + LTI3_SUFFIX, toolConfiguration.getTarget_link_uri());
         assertEquals(SAMPLE_DESCRIPTION, toolConfiguration.getDescription());
 
