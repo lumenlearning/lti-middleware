@@ -148,7 +148,9 @@ public class RegistrationServiceImpl implements RegistrationService {
         toolConfigurationDTO.setDescription(description);
         List<ToolMessagesSupportedDTO> messages = new ArrayList<>();
 
-        if (!domainUrl.contains("goldilocks")) {
+        // Staging: https://goldilocks.ludev.team 
+        // Production: https://goldilocks.lumenlearning.com 
+        if (!domainUrl.contains("goldilocks")) { // Goldilocks shouldn't support deep linking - although this is non-critical and will not break dynamic registration if deep linking IS set for Goldilocks
             // Indicate Deep Linking support
             ToolMessagesSupportedDTO message1 = new ToolMessagesSupportedDTO();
             message1.setType("LtiDeepLinkingRequest");
