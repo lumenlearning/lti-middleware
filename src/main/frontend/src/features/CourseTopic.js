@@ -36,7 +36,7 @@ function CourseTopic (props) {
   }
 
   return (
-    <Row className="mt-4">
+    <Row className="mt-4 pb-5">
       <div className="section-header">
         <Form.Check type="checkbox" onChange={(e) => toggleModule(e)} checked={props.selected} id={`module-${props.index}`} label={moduleName}/>
       </div>
