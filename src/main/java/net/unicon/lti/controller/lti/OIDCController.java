@@ -75,6 +75,7 @@ public class OIDCController {
 
         // We need to receive the parameters and search for the deployment of the tool that matches with what we receive.
         LoginInitiationDTO loginInitiationDTO = new LoginInitiationDTO(req);
+        log.debug(loginInitiationDTO.toString());
         List<PlatformDeployment> platformDeploymentList;
         // Getting the client_id (that is optional) and can come in the form or in the URL.
         String clientIdValue = loginInitiationDTO.getClientId();
@@ -132,6 +133,8 @@ public class OIDCController {
             // cookies, so we can compare later if they are valid.
             res.addCookie(generateLtiOidcCookie(LTI_STATE_COOKIE_NAME, parameters.get("state")));
             res.addCookie(generateLtiOidcCookie(LTI_NONCE_COOKIE_NAME, parameters.get("nonce")));
+
+            log.debug("model = " + model.toString());
 
             // Once all is added to the session, and we have the data ready for the html template, we redirect
             if (!ltiDataService.getDemoMode()) {
