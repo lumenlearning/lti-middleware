@@ -138,6 +138,7 @@ public class OIDCController {
 
             // Once all is added to the session, and we have the data ready for the html template, we redirect
             if (!ltiDataService.getDemoMode()) {
+                log.debug("redirecting to " + parameters.get("oicdEndpointComplete"));
                 return "redirect:" + parameters.get("oicdEndpointComplete");
             } else {
                 return "oicdRedirect";
