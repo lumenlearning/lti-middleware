@@ -134,11 +134,8 @@ public class OIDCController {
             res.addCookie(generateLtiOidcCookie(LTI_STATE_COOKIE_NAME, parameters.get("state")));
             res.addCookie(generateLtiOidcCookie(LTI_NONCE_COOKIE_NAME, parameters.get("nonce")));
 
-            log.debug("model = " + model.toString());
-
             // Once all is added to the session, and we have the data ready for the html template, we redirect
             if (!ltiDataService.getDemoMode()) {
-                log.debug("redirecting to " + parameters.get("oicdEndpointComplete"));
                 return "redirect:" + parameters.get("oicdEndpointComplete");
             } else {
                 return "oicdRedirect";
@@ -178,6 +175,7 @@ public class OIDCController {
         authRequestMap.put("state", state); //The state we use later to retrieve some useful information about the OICD request.
         authRequestMap.put("oicdEndpoint", oidcEndpoint);  //We need this in the Thymeleaf template in case we decide to use the POST method. It is the endpoint where the LMS receives the OICD requests
         authRequestMap.put("oicdEndpointComplete", generateCompleteUrl(authRequestMap));  //This generates the URL to use in case we decide to use the GET method
+        log.debug("Authorization Request Payload = " + authRequestMap);
         return authRequestMap;
     }
 
