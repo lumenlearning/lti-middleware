@@ -167,7 +167,7 @@ public class OIDCController {
         //Getting the right redirect url based on the target url.
         String altDomain = DomainUtils.extractDomain(loginInitiationDTO.getTargetLinkUri());
         String altLocalUrl = ltiDataService.getLocalUrl();
-        log.debug("local url = " + ltiDataService.getLocalUrl() + "; domain = " + ltiDataService.getDomainUrl());
+        log.debug("local url = " + ltiDataService.getLocalUrl() + "; domain = " + ltiDataService.getDomainUrl() + "; alt domain = " + altDomain);
         if (altDomain!=null){
             altLocalUrl = DomainUtils.insertDomain(altDomain, altLocalUrl);
         } else if (DomainUtils.isWildcardDomain(loginInitiationDTO.getTargetLinkUri(),altLocalUrl)) {
