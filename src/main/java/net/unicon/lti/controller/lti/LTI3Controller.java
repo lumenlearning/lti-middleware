@@ -102,7 +102,7 @@ public class LTI3Controller {
         if (StringUtils.isNotBlank(altDomain)){
             String extractedDomain = DomainUtils.extractDomain(altDomain);
             if (extractedDomain == null && DomainUtils.isWildcardDomain(altDomain, ltiDataService.getLocalUrl())) {
-                String wildcardDomain = DomainUtils.extractWildcardDomain(extractedDomain);
+                String wildcardDomain = DomainUtils.extractWildcardDomain(altDomain);
                 extractedDomain = DomainUtils.insertWildcardDomain(wildcardDomain, ltiDataService.getLocalUrl());
             }
             altDomain = extractedDomain;
