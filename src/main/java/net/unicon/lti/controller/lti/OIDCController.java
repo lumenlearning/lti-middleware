@@ -169,7 +169,8 @@ public class OIDCController {
         String altLocalUrl = ltiDataService.getLocalUrl();
         if (altDomain!=null){
             altLocalUrl = DomainUtils.insertDomain(altDomain, altLocalUrl);
-        } else if (DomainUtils.isWildcardDomain(loginInitiationDTO.getTargetLinkUri(),altLocalUrl)) {
+        } else if (DomainUtils.isWildcardDomain(loginInitiationDTO.getTargetLinkUri(),altLocalUrl) ||
+                    DomainUtils.isWildcardDomain(loginInitiationDTO.getTargetLinkUri(), ltiDataService.getDomainUrl())) {
             String wildcardDomain = DomainUtils.extractWildcardDomain(loginInitiationDTO.getTargetLinkUri());
             altLocalUrl = DomainUtils.insertWildcardDomain(wildcardDomain, altLocalUrl);
         }
