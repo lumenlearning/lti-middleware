@@ -169,10 +169,12 @@ public class OIDCController {
         String altLocalUrl = ltiDataService.getLocalUrl();
         if (altDomain!=null){
             altLocalUrl = DomainUtils.insertDomain(altDomain, altLocalUrl);
-        } else if (DomainUtils.isWildcardDomain(loginInitiationDTO.getTargetLinkUri(),altLocalUrl) ||
-                    DomainUtils.isWildcardDomain(loginInitiationDTO.getTargetLinkUri(), ltiDataService.getDomainUrl())) {
+        } else if (DomainUtils.isWildcardDomain(loginInitiationDTO.getTargetLinkUri(),altLocalUrl)) {
             String wildcardDomain = DomainUtils.extractWildcardDomain(loginInitiationDTO.getTargetLinkUri());
             altLocalUrl = DomainUtils.insertWildcardDomain(wildcardDomain, altLocalUrl);
+        } else if (DomainUtils.isWildcardDomain(loginInitiationDTO.getTargetLinkUri(), ltiDataService.getDomainUrl())) {
+            String wildcardDomain = DomainUtils.extractWildcardDomain(loginInitiationDTO.getTargetLinkUri());
+            altLocalUrl = DomainUtils.insertWildcardDomain(wildcardDomain, ltiDataService.getDomainUrl());
         }
         authRequestMap.put("redirect_uri", altLocalUrl + TextConstants.LTI3_SUFFIX);  // One of the valid redirect uris.
         authRequestMap.put("response_mode", OIDC_FORM_POST); //Always this value, as specified in the standard.
