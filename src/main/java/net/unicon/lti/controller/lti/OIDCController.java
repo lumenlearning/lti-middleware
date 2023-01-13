@@ -171,7 +171,7 @@ public class OIDCController {
         if (altDomain!=null){
             altLocalUrl = DomainUtils.insertDomain(altDomain, altLocalUrl);
         } else if (DomainUtils.isWildcardDomain(loginInitiationDTO.getTargetLinkUri(),altLocalUrl)) {
-            log.debug("Wildcard detected against local url")
+            log.debug("Wildcard detected against local url");
             String wildcardDomain = DomainUtils.extractWildcardDomain(loginInitiationDTO.getTargetLinkUri());
             altLocalUrl = DomainUtils.insertWildcardDomain(wildcardDomain, altLocalUrl);
         } else if (DomainUtils.isWildcardDomain(loginInitiationDTO.getTargetLinkUri(), ltiDataService.getDomainUrl())) {
