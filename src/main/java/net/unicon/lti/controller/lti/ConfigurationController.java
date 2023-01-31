@@ -14,9 +14,13 @@ package net.unicon.lti.controller.lti;
 
 import lombok.extern.slf4j.Slf4j;
 import net.unicon.lti.model.AlternativeDomain;
+import net.unicon.lti.model.LtiContextEntity;
 import net.unicon.lti.model.PlatformDeployment;
+import net.unicon.lti.model.ags.LineItems;
 import net.unicon.lti.repository.AlternativeDomainRepository;
 import net.unicon.lti.repository.PlatformDeploymentRepository;
+import net.unicon.lti.service.lti.AdvantageAGSService;
+import net.unicon.lti.service.lti.LTIDataService;
 import net.unicon.lti.utils.TextConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +41,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -53,6 +58,12 @@ public class ConfigurationController {
 
     @Autowired
     AlternativeDomainRepository alternativeDomainRepository;
+
+    @Autowired
+    LTIDataService ltiDataService;
+
+    @Autowired
+    AdvantageAGSService advantageAGSService;
 
     @GetMapping(value = "/", produces = "application/json;")
     @ResponseBody
@@ -211,6 +222,23 @@ public class ConfigurationController {
         alternativeDomainRepository.deleteById(altDomain);
         return new ResponseEntity<>(altDomain, HttpStatus.OK);
 
+    }
+
+    @RequestMapping(value = "/lineitems/resync")
+    public ResponseEntity<LineItems> resyncLineitems(@RequestParam String ltiContextId, @RequestParam String iss, @RequestParam String clientId, @RequestParam String deploymentId) {
+        //To keep this endpoint secured, we will need to add something.
+        try {
+            PlatformDeployment platformDeployment = ltiDataService.getRepos().platformDeploymentRepository.findByIssAndClientIdAndDeploymentId(iss, clientId, deploymentId).get(0);
+            LtiContextEntity ltiContext = Objects.requireNonNull(
+                    ltiDataService.getRepos().contexts.findByContextKeyAndPlatformDeployment(ltiContextId, platformDeployment),
+                    "LTI context should exist for iss " + iss + ", client_id " + clientId + ", and deployment_id " + deploymentId);
+            LineItems lineItems = advantageAGSService.getLineItems(platformDeployment, ltiContext.getLineitems());
+            return ResponseEntity.ok(lineItems);
+        } catch (Exception e) {
+            log.debug(e.getMessage());
+            log.debug("No permissions to fetch lineitems from Harmony");
+            return ResponseEntity.status(403).build();
+        }
     }
 
 }
