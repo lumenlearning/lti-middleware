@@ -12,6 +12,7 @@
  */
 package net.unicon.lti.utils.lti;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
@@ -71,6 +72,18 @@ public final class LtiOidcUtils {
                 .setHeaderParam("kid", TextConstants.DEFAULT_KID)  // The key id used to sign this
                 .setHeaderParam("typ", "JWT") // The type
                 .setClaims(lti3Request.getClaims())
+                .signWith(SignatureAlgorithm.RS256, issPrivateKey)
+                .compact();
+        log.debug("LTI Token: \n {} \n", ltiToken);
+        return ltiToken;
+    }
+
+    public static String generateLtiToken(Claims claims, LTIDataService ltiDataService) throws GeneralSecurityException {
+        Key issPrivateKey = OAuthUtils.loadPrivateKey(ltiDataService.getOwnPrivateKey());
+        String ltiToken = Jwts.builder()
+                .setHeaderParam("kid", TextConstants.DEFAULT_KID)  // The key id used to sign this
+                .setHeaderParam("typ", "JWT") // The type
+                .setClaims(claims)
                 .signWith(SignatureAlgorithm.RS256, issPrivateKey)
                 .compact();
         log.debug("LTI Token: \n {} \n", ltiToken);
