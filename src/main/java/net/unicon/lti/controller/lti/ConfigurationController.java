@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.unicon.lti.model.AlternativeDomain;
 import net.unicon.lti.model.LtiContextEntity;
 import net.unicon.lti.model.PlatformDeployment;
+import net.unicon.lti.model.ags.LineItem;
 import net.unicon.lti.model.ags.LineItems;
 import net.unicon.lti.repository.AlternativeDomainRepository;
 import net.unicon.lti.repository.PlatformDeploymentRepository;
@@ -225,18 +226,18 @@ public class ConfigurationController {
     }
 
     @RequestMapping(value = "/lineitems/resync")
-    public ResponseEntity<LineItems> resyncLineitems(@RequestParam String ltiContextId, @RequestParam String iss, @RequestParam String clientId, @RequestParam String deploymentId) {
+    public ResponseEntity<List<LineItem>> resyncLineitems(@RequestParam String ltiContextId, @RequestParam String iss, @RequestParam String clientId, @RequestParam String deploymentId) {
         //To keep this endpoint secured, we will need to add something.
         try {
             PlatformDeployment platformDeployment = ltiDataService.getRepos().platformDeploymentRepository.findByIssAndClientIdAndDeploymentId(iss, clientId, deploymentId).get(0);
             LtiContextEntity ltiContext = Objects.requireNonNull(
                     ltiDataService.getRepos().contexts.findByContextKeyAndPlatformDeployment(ltiContextId, platformDeployment),
-                    "LTI context should exist for iss " + iss + ", client_id " + clientId + ", and deployment_id " + deploymentId);
+                    "LTI context should exist for context_id " + ltiContextId + " iss " + iss + ", client_id " + clientId + ", and deployment_id " + deploymentId);
             LineItems lineItems = advantageAGSService.getLineItems(platformDeployment, ltiContext.getLineitems());
-            return ResponseEntity.ok(lineItems);
+            return ResponseEntity.ok(lineItems.getLineItemList());
         } catch (Exception e) {
             log.debug(e.getMessage());
-            log.debug("No permissions to fetch lineitems from Harmony");
+            log.debug("No permissions to fetch lineitems for Harmony");
             return ResponseEntity.status(403).build();
         }
     }
