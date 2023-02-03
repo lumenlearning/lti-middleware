@@ -12,12 +12,21 @@
  */
 package net.unicon.lti.controller.lti;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
 import net.unicon.lti.model.AlternativeDomain;
+import net.unicon.lti.model.LtiContextEntity;
 import net.unicon.lti.model.PlatformDeployment;
+import net.unicon.lti.model.ags.LineItem;
+import net.unicon.lti.model.ags.LineItems;
 import net.unicon.lti.repository.AlternativeDomainRepository;
 import net.unicon.lti.repository.PlatformDeploymentRepository;
+import net.unicon.lti.service.harmony.HarmonyService;
+import net.unicon.lti.service.lti.AdvantageAGSService;
+import net.unicon.lti.service.lti.LTIDataService;
 import net.unicon.lti.utils.TextConstants;
+import net.unicon.lti.utils.lti.LtiOidcUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -36,8 +45,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * This controller is protected by basic authentication
@@ -53,6 +67,15 @@ public class ConfigurationController {
 
     @Autowired
     AlternativeDomainRepository alternativeDomainRepository;
+
+    @Autowired
+    LTIDataService ltiDataService;
+
+    @Autowired
+    HarmonyService harmonyService;
+
+    @Autowired
+    AdvantageAGSService advantageAGSService;
 
     @GetMapping(value = "/", produces = "application/json;")
     @ResponseBody
@@ -211,6 +234,44 @@ public class ConfigurationController {
         alternativeDomainRepository.deleteById(altDomain);
         return new ResponseEntity<>(altDomain, HttpStatus.OK);
 
+    }
+
+    @RequestMapping(value = "/lineitems/resync")
+    public ResponseEntity<List<LineItem>> resyncLineitems(@RequestParam String ltiContextId, @RequestParam String iss, @RequestParam String clientId, @RequestParam String deploymentId) {
+        //To keep this endpoint secured, we will need to add something.
+        try {
+            PlatformDeployment platformDeployment = ltiDataService.getRepos().platformDeploymentRepository.findByIssAndClientIdAndDeploymentId(iss, clientId, deploymentId).get(0);
+            LtiContextEntity ltiContext = Objects.requireNonNull(
+                    ltiDataService.getRepos().contexts.findByContextKeyAndPlatformDeployment(ltiContextId, platformDeployment),
+                    "LTI context should exist for context_id " + ltiContextId + " iss " + iss + ", client_id " + clientId + ", and deployment_id " + deploymentId);
+            LineItems lineItems = advantageAGSService.getLineItems(platformDeployment, ltiContext.getLineitems());
+            //Create the "fake" id_token needed by the postLineItemsToHarmony method
+            Map<String, Object> claimsMap = new HashMap<>();
+            Map<String, Object> context= new HashMap<>();
+            context.put("id", ltiContextId);
+            claimsMap.put("https://purl.imsglobal.org/spec/lti/claim/context", context);
+            claimsMap.put("https://purl.imsglobal.org/spec/lti/claim/deployment_id", deploymentId);
+
+            Claims claims = Jwts.claims(claimsMap).setIssuer(iss);
+            claims.setAudience(clientId);
+            claims.setIssuedAt(new Date());
+            claims.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24));
+            claims.setSubject(UUID.randomUUID().toString());
+            claims.setId(UUID.randomUUID().toString());
+
+            String middlewareIdToken = LtiOidcUtils.generateLtiToken(claims, ltiDataService);
+            ResponseEntity<Map> harmonyLineitemsResponse = harmonyService.postLineitemsToHarmony(lineItems, middlewareIdToken);
+            if (harmonyLineitemsResponse != null && harmonyLineitemsResponse.getStatusCode().is2xxSuccessful()) {
+                return ResponseEntity.ok(lineItems.getLineItemList());
+            } else {
+                log.debug("Error posting lineitems to Harmony");
+                return ResponseEntity.badRequest().build();
+            }
+        } catch (Exception e) {
+            log.debug(e.getMessage());
+            log.debug("No permissions to fetch lineitems for Harmony");
+            return ResponseEntity.status(403).build();
+        }
     }
 
 }
