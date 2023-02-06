@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.unicon.lti.model.AlternativeDomain;
 import net.unicon.lti.model.LtiContextEntity;
 import net.unicon.lti.model.PlatformDeployment;
+import net.unicon.lti.model.ResyncContextDeployment;
 import net.unicon.lti.model.ags.LineItem;
 import net.unicon.lti.model.ags.LineItems;
 import net.unicon.lti.repository.AlternativeDomainRepository;
@@ -237,23 +238,23 @@ public class ConfigurationController {
     }
 
     @PostMapping("/lineitems/resync")
-    public ResponseEntity<List<LineItem>> resyncLineitems(@RequestParam String ltiContextId, @RequestParam String iss, @RequestParam String clientId, @RequestParam String deploymentId) {
+    public ResponseEntity<List<LineItem>> resyncLineitems(@RequestBody ResyncContextDeployment resyncContextDeployment) {
         //To keep this endpoint secured, we will need to add something.
         try {
-            PlatformDeployment platformDeployment = ltiDataService.getRepos().platformDeploymentRepository.findByIssAndClientIdAndDeploymentId(iss, clientId, deploymentId).get(0);
+            PlatformDeployment platformDeployment = ltiDataService.getRepos().platformDeploymentRepository.findByIssAndClientIdAndDeploymentId(resyncContextDeployment.getIss(), resyncContextDeployment.getClientId(), resyncContextDeployment.getDeploymentId()).get(0);
             LtiContextEntity ltiContext = Objects.requireNonNull(
-                    ltiDataService.getRepos().contexts.findByContextKeyAndPlatformDeployment(ltiContextId, platformDeployment),
-                    "LTI context should exist for context_id " + ltiContextId + " iss " + iss + ", client_id " + clientId + ", and deployment_id " + deploymentId);
+                    ltiDataService.getRepos().contexts.findByContextKeyAndPlatformDeployment(resyncContextDeployment.getLtiContextId(), platformDeployment),
+                    "LTI context should exist for context_id " + resyncContextDeployment.getLtiContextId() + " iss " + resyncContextDeployment.getIss() + ", client_id " + resyncContextDeployment.getClientId() + ", and deployment_id " + resyncContextDeployment.getDeploymentId());
             LineItems lineItems = advantageAGSService.getLineItems(platformDeployment, ltiContext.getLineitems());
             //Create the "fake" id_token needed by the postLineItemsToHarmony method
             Map<String, Object> claimsMap = new HashMap<>();
             Map<String, Object> context= new HashMap<>();
-            context.put("id", ltiContextId);
+            context.put("id", resyncContextDeployment.getLtiContextId());
             claimsMap.put("https://purl.imsglobal.org/spec/lti/claim/context", context);
-            claimsMap.put("https://purl.imsglobal.org/spec/lti/claim/deployment_id", deploymentId);
+            claimsMap.put("https://purl.imsglobal.org/spec/lti/claim/deployment_id", resyncContextDeployment.getDeploymentId());
 
-            Claims claims = Jwts.claims(claimsMap).setIssuer(iss);
-            claims.setAudience(clientId);
+            Claims claims = Jwts.claims(claimsMap).setIssuer(resyncContextDeployment.getIss());
+            claims.setAudience(resyncContextDeployment.getClientId());
             claims.setIssuedAt(new Date());
             claims.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24));
             claims.setSubject(UUID.randomUUID().toString());
