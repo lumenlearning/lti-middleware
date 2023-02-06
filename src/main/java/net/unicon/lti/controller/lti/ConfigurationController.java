@@ -236,7 +236,7 @@ public class ConfigurationController {
 
     }
 
-    @RequestMapping(value = "/lineitems/resync")
+    @PostMapping("/lineitems/resync")
     public ResponseEntity<List<LineItem>> resyncLineitems(@RequestParam String ltiContextId, @RequestParam String iss, @RequestParam String clientId, @RequestParam String deploymentId) {
         //To keep this endpoint secured, we will need to add something.
         try {
