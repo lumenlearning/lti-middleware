@@ -51,6 +51,7 @@ var _LtiStorage_instances,
   _LtiPostMessage_getTargetWindow,
   _LtiPostMessage_getTargetFrame,
   _LtiPostMessageLog_debug;
+
 class LtiStorage {
   constructor(debug) {
     _LtiStorage_instances.add(this);
@@ -125,7 +126,6 @@ class LtiStorage {
         };
       });
   }
-
   doLoginInitiationRedirect(formData) {
     //formData is params data returned by setStateAndNonce
     //how do we use this formdata in redirect?
@@ -184,6 +184,7 @@ class LtiStorage {
     );
   }
 }
+
 (_LtiStorage_debug = new WeakMap()),
   (_LtiStorage_instances = new WeakSet()),
   (_LtiStorage_setStateAndNonceCookies =
@@ -215,6 +216,7 @@ class LtiStorage {
           .includes(LtiStorage.cookiePrefix + "_nonce_" + nonce + "=" + nonce)
       );
     });
+
 LtiStorage.cookiePrefix = "lti";
 class LtiPostMessage {
   constructor(targetOrigin, launchFrame, debug) {
@@ -223,13 +225,6 @@ class LtiPostMessage {
     __classPrivateFieldSet(this, _LtiPostMessage_debug, debug, "f");
     this._targetOrigin = targetOrigin;
     this._launchFrame = launchFrame || window;
-  }
-  static secureRandom(length) {
-    let random = new Uint8Array(length || 63);
-    crypto.getRandomValues(random);
-    return btoa(String.fromCharCode(...random))
-      .replace(/\//g, "_")
-      .replace(/\+/g, "-");
   }
   async sendPostMessage(data, targetWindow, originOverride, targetFrameName) {
     return new Promise((resolve, reject) => {
