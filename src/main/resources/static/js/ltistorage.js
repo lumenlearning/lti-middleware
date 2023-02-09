@@ -69,7 +69,7 @@ class LtiStorage {
       launchFrame,
       hasPlatformStorage
     );
-    //.then(this.doLoginInitiationRedirect);
+    //.then(this.doLoginInitiationRedirect); //TODO: when do we redirect? where to redirect? will send a post request as a form
   }
   async setStateAndNonce(
     platformOidcLoginUrl,
@@ -83,19 +83,21 @@ class LtiStorage {
     })
       .then(async (hasPlatformStorage) => {
         if (hasPlatformStorage) {
-          let platformStorage = this.ltiPostMessage(
-            new URL(platformOidcLoginUrl).origin,
-            launchWindow
-          );
+          let targetOrigin = new URL(platformOidcLoginUrl).origin;
+          let platformStorage = this.ltiPostMessage(targetOrigin, launchWindow);
+
+          console.log("plat storage", platformStorage);
           return platformStorage
             .putData(
               LtiStorage.cookiePrefix + "_state_" + oidcLoginData.state,
-              oidcLoginData.state
+              oidcLoginData.state,
+              targetOrigin
             )
             .then(() =>
               platformStorage.putData(
                 LtiStorage.cookiePrefix + "_nonce_" + oidcLoginData.nonce,
-                oidcLoginData.nonce
+                oidcLoginData.nonce,
+                targetOrigin
               )
             );
         }
@@ -366,15 +368,17 @@ class LtiPostMessage {
       });
     });
   }
-  async putData(key, value) {
-    return this.sendPostMessageIfCapable({
-      subject: "lti.put_data",
-      key: key,
-      value: value,
-    }).then((response) => {
-      return true;
-    });
+  async putData(key, value, redirectURI) {
+    window.parent.postMessage(
+      {
+        subject: "lti.put_data",
+        key: key,
+        value: value,
+      },
+      redirectURI
+    );
   }
+
   async getData(key) {
     return this.sendPostMessageIfCapable({
       subject: "lti.get_data",
