@@ -224,13 +224,6 @@ class LtiPostMessage {
     this._targetOrigin = targetOrigin;
     this._launchFrame = launchFrame || window;
   }
-  static secureRandom(length) {
-    let random = new Uint8Array(length || 63);
-    crypto.getRandomValues(random);
-    return btoa(String.fromCharCode(...random))
-      .replace(/\//g, "_")
-      .replace(/\+/g, "-");
-  }
   async sendPostMessage(data, targetWindow, originOverride, targetFrameName) {
     return new Promise((resolve, reject) => {
       let log = new LtiPostMessageLog(
