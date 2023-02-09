@@ -51,7 +51,6 @@ var _LtiStorage_instances,
   _LtiPostMessage_getTargetWindow,
   _LtiPostMessage_getTargetFrame,
   _LtiPostMessageLog_debug;
-
 class LtiStorage {
   constructor(debug) {
     _LtiStorage_instances.add(this);
@@ -69,7 +68,8 @@ class LtiStorage {
       oidcLoginData,
       launchFrame,
       hasPlatformStorage
-    ); //.then(this.doLoginInitiationRedirect);
+    );
+    //.then(this.doLoginInitiationRedirect);
   }
   async setStateAndNonce(
     platformOidcLoginUrl,
@@ -87,7 +87,6 @@ class LtiStorage {
             new URL(platformOidcLoginUrl).origin,
             launchWindow
           );
-
           return platformStorage
             .putData(
               LtiStorage.cookiePrefix + "_state_" + oidcLoginData.state,
@@ -127,8 +126,6 @@ class LtiStorage {
       });
   }
   doLoginInitiationRedirect(formData) {
-    //formData is params data returned by setStateAndNonce
-    //how do we use this formdata in redirect?
     let form = document.createElement("form");
     for (let key in formData.params) {
       let element = document.createElement("input");
@@ -140,9 +137,10 @@ class LtiStorage {
     form.method = "POST";
     form.action = formData.url.toString();
     document.body.appendChild(form);
-    //form.submit();
+    form.submit();
   }
   async validateStateAndNonce(state, nonce, platformOrigin, launchFrame) {
+    //TODO: this function is not used - do we need it?
     // Check cookie first
     if (
       document.cookie
@@ -184,7 +182,6 @@ class LtiStorage {
     );
   }
 }
-
 (_LtiStorage_debug = new WeakMap()),
   (_LtiStorage_instances = new WeakSet()),
   (_LtiStorage_setStateAndNonceCookies =
@@ -218,6 +215,7 @@ class LtiStorage {
     });
 
 LtiStorage.cookiePrefix = "lti";
+
 class LtiPostMessage {
   constructor(targetOrigin, launchFrame, debug) {
     _LtiPostMessage_instances.add(this);
@@ -225,6 +223,13 @@ class LtiPostMessage {
     __classPrivateFieldSet(this, _LtiPostMessage_debug, debug, "f");
     this._targetOrigin = targetOrigin;
     this._launchFrame = launchFrame || window;
+  }
+  static secureRandom(length) {
+    let random = new Uint8Array(length || 63);
+    crypto.getRandomValues(random);
+    return btoa(String.fromCharCode(...random))
+      .replace(/\//g, "_")
+      .replace(/\+/g, "-");
   }
   async sendPostMessage(data, targetWindow, originOverride, targetFrameName) {
     return new Promise((resolve, reject) => {
