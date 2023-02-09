@@ -78,28 +78,43 @@ class LtiStorage {
     hasPlatformStorage
   ) {
     let launchWindow = launchFrame || window;
+    let targetOrigin = new URL(platformOidcLoginUrl).origin;
+
     return new Promise((resolve, reject) => {
       return resolve(hasPlatformStorage);
     })
       .then(async (hasPlatformStorage) => {
         if (hasPlatformStorage) {
-          let targetOrigin = new URL(platformOidcLoginUrl).origin;
           let platformStorage = this.ltiPostMessage(targetOrigin, launchWindow);
 
-          console.log("plat storage", platformStorage);
           return platformStorage
             .putData(
               LtiStorage.cookiePrefix + "_state_" + oidcLoginData.state,
-              oidcLoginData.state,
-              targetOrigin
+              oidcLoginData.state
             )
-            .then(() =>
-              platformStorage.putData(
-                LtiStorage.cookiePrefix + "_nonce_" + oidcLoginData.nonce,
-                oidcLoginData.nonce,
-                targetOrigin
-              )
-            );
+            .then((stateData) => {
+              localStorage.setItem("state", JSON.stringify(stateData)); //storing state in local storage
+              window.parent.postMessage(
+                //sending state in post message
+                stateData,
+                new URL(platformOidcLoginUrl).origin
+              );
+            })
+            .then(() => {
+              platformStorage
+                .putData(
+                  LtiStorage.cookiePrefix + "_nonce_" + oidcLoginData.nonce,
+                  oidcLoginData.nonce
+                )
+                .then((nonceData) => {
+                  localStorage.setItem("nonce", JSON.stringify(nonceData)); //storing nonce in local storage
+                  window.parent.postMessage(
+                    //sending nonce in post message
+                    nonceData,
+                    new URL(platformOidcLoginUrl).origin
+                  );
+                });
+            });
         }
         return Promise.reject();
       })
@@ -368,15 +383,12 @@ class LtiPostMessage {
       });
     });
   }
-  async putData(key, value, redirectURI) {
-    window.parent.postMessage(
-      {
-        subject: "lti.put_data",
-        key: key,
-        value: value,
-      },
-      redirectURI
-    );
+  async putData(key, value) {
+    return {
+      subject: "lti.put_data",
+      key: key,
+      value: value,
+    };
   }
 
   async getData(key) {
