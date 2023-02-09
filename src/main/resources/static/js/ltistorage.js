@@ -143,6 +143,8 @@ class LtiStorage {
       });
   }
   doLoginInitiationRedirect(formData) {
+    //uses formData returned from setStateAndNonce function
+    //TODO: when do we need to do this redirect?
     let form = document.createElement("form");
     for (let key in formData.params) {
       let element = document.createElement("input");
