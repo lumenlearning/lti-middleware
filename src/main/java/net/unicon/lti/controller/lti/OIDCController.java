@@ -10,6 +10,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/** This code originates from 1EdTech's LTI Postmessage Example Library.
+ * We have edited this code for our use.
+ * The original can be found here: https://github.com/1EdTech/lti-postmessage-library
+*/
+
 package net.unicon.lti.controller.lti;
 
 import com.google.common.hash.Hashing;
@@ -118,6 +123,7 @@ public class OIDCController {
             // We add that information so the thymeleaf template can display it (and prepare the links)
             //model.addAllAttributes(parameters);
             // These 3 are to display what we received from the platform.
+            log.debug("params: " + parameters);
             if (ltiDataService.getDemoMode()) {
                 model.addAllAttributes(parameters);
                 model.addAttribute("initiation_dto", loginInitiationDTO);
@@ -137,10 +143,15 @@ public class OIDCController {
                 if (StringUtils.isBlank(parameters.get("ltiStorageTarget"))){
                     return "redirect:" + parameters.get("oicdEndpointComplete");
                 } else {
-                     model.addAllAttributes(parameters);
+                    model.addAllAttributes(parameters);
                     model.addAttribute("state", parameters.get("state"));
+                    model.addAttribute("nonce", parameters.get("nonce"));
                     model.addAttribute("lti_storage_target", parameters.get("ltiStorageTarget"));
                     model.addAttribute("oidc_endpoint_complete", parameters.get("oicdEndpointComplete"));
+                    model.addAttribute("login_hint", parameters.get("loginHint"));
+                    model.addAttribute("lti_message_hint", parameters.get("lti_message_hint"));
+                    model.addAttribute("oicdEndpoint", parameters.get("oicdEndpoint"));
+                    model.addAttribute("client_id", parameters.get("client_id"));
                     return "oidcLtiStorage";
                 }
             } else {
