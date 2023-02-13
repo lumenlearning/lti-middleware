@@ -143,7 +143,6 @@ public class OIDCController {
                 if (StringUtils.isBlank(parameters.get("ltiStorageTarget"))){
                     return "redirect:" + parameters.get("oicdEndpointComplete");
                 } else {
-                    model.addAllAttributes(parameters);
                     model.addAttribute("state", parameters.get("state"));
                     model.addAttribute("nonce", parameters.get("nonce"));
                     model.addAttribute("lti_storage_target", parameters.get("ltiStorageTarget"));
