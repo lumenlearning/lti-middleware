@@ -10,10 +10,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/** This code originates from 1EdTech's LTI Postmessage Example Library.
- * We have edited this code for our use.
- * The original can be found here: https://github.com/1EdTech/lti-postmessage-library
-*/
 
 package net.unicon.lti.controller.lti;
 

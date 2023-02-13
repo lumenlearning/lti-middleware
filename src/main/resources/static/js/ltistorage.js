@@ -1,4 +1,8 @@
 "use strict";
+//  This code originates from 1EdTech's LTI Postmessage Example Library.
+//  We have edited this code for our use.
+//  The original can be found here: https://github.com/1EdTech/lti-postmessage-library
+
 var __classPrivateFieldSet =
   (this && this.__classPrivateFieldSet) ||
   function (receiver, state, value, kind, f) {
