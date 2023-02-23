@@ -202,6 +202,7 @@ public class LTI3Request implements ApplicationContextAware {
 
     Map<String, List<String>> deepLinkJwts;
 
+    private boolean forceNonceCheck = true;
 
     /**
      * @return the current LTI3Request object if there is one available, null if there isn't one and this is not a valid LTI3 based request
@@ -348,6 +349,24 @@ public class LTI3Request implements ApplicationContextAware {
         }
     }
 
+    public LTI3Request(LTIDataService ltiDataService, boolean update, String linkId, String jwt, boolean forceNonceCheck) throws DataServiceException {
+        if (ltiDataService == null) throw new AssertionError("LTIDataService cannot be null");
+        this.forceNonceCheck = forceNonceCheck;
+        this.ltiDataService = ltiDataService;
+        this.jws = validateAndRetrieveJWTClaims(ltiDataService, jwt);
+
+        validateIdToken(jws, null);
+
+        //Here we will populate the LTI3Request object
+        processRequestParameters(jws);
+
+        // We update the database in case we have new values. (New users, new resources...etc)
+        // Load data from DB related with this request and update it if needed with the new values.
+        if (update) {
+            updateLTIDataInDB(jws, linkId);
+        }
+    }
+
     private void validateIdToken(Jws<Claims> jws, String ltiStorageTarget) {
         // Validate deployment
         String iss = jws.getBody().getIssuer();
@@ -367,8 +386,8 @@ public class LTI3Request implements ApplicationContextAware {
         log.debug("ltiStorageTarget in LTI3Request");
         log.debug(ltiStorageTarget);
 
-        // If there is no ltiStorageTarget value then we check the nonce here for the cookie flow
-        if (StringUtils.isBlank(ltiStorageTarget)) {
+        // If forceNonceCheck is true and there is no ltiStorageTarget value then we check the nonce here for the cookie flow
+        if (forceNonceCheck && StringUtils.isBlank(ltiStorageTarget)) {
             //Now we are going to check the if the nonce is valid.
             String checkNonce = checkNonce(jws);
             if (!checkNonce.equals("true")) {

@@ -115,7 +115,7 @@ public class HarmonyRestControllerTest {
             HarmonyPageResponse harmonyPageResponse = new HarmonyPageResponse();
             when(harmonyService.fetchHarmonyCourses(anyInt(), any())).thenReturn(harmonyPageResponse);
 
-            ResponseEntity<HarmonyPageResponse> harmonyPageResponseResponseEntity = harmonyRestController.listHarmonyCourses(ID_TOKEN, 1, null, null);
+            ResponseEntity<HarmonyPageResponse> harmonyPageResponseResponseEntity = harmonyRestController.listHarmonyCourses(ID_TOKEN, 1, null);
 
             // verify id_token is a valid, unexpired JWT with a valid signature
             verify(jwtParser).parseClaimsJws(eq(ID_TOKEN));
@@ -149,7 +149,7 @@ public class HarmonyRestControllerTest {
             HarmonyPageResponse harmonyPageResponse = new HarmonyPageResponse();
             when(harmonyService.fetchHarmonyCourses(anyInt(), any())).thenReturn(harmonyPageResponse);
 
-            ResponseEntity<HarmonyPageResponse> harmonyPageResponseResponseEntity = harmonyRestController.listHarmonyCourses(ID_TOKEN, 1, "root", null);
+            ResponseEntity<HarmonyPageResponse> harmonyPageResponseResponseEntity = harmonyRestController.listHarmonyCourses(ID_TOKEN, 1, "root");
 
             // verify id_token is a valid, unexpired JWT with a valid signature
             verify(jwtParser).parseClaimsJws(eq(ID_TOKEN));
@@ -187,7 +187,7 @@ public class HarmonyRestControllerTest {
             when(platformDeploymentRepository.findByIssAndClientIdAndDeploymentId(any(String.class), any(String.class), any(String.class)))
                     .thenReturn(new ArrayList<>());
 
-            ResponseEntity<HarmonyPageResponse> harmonyPageResponseResponseEntity = harmonyRestController.listHarmonyCourses(ID_TOKEN, 1, null, null);
+            ResponseEntity<HarmonyPageResponse> harmonyPageResponseResponseEntity = harmonyRestController.listHarmonyCourses(ID_TOKEN, 1, null);
 
             // verify id_token is a valid, unexpired JWT with a valid signature
             verify(jwtParser).parseClaimsJws(eq(ID_TOKEN));
@@ -221,7 +221,7 @@ public class HarmonyRestControllerTest {
             HarmonyPageResponse harmonyPageResponse = new HarmonyPageResponse();
             when(harmonyService.fetchHarmonyCourses(anyInt(), any())).thenReturn(harmonyPageResponse);
 
-            ResponseEntity<HarmonyPageResponse> harmonyPageResponseResponseEntity = harmonyRestController.listHarmonyCourses(null, 1, null, null);
+            ResponseEntity<HarmonyPageResponse> harmonyPageResponseResponseEntity = harmonyRestController.listHarmonyCourses(null, 1, null);
 
             // verify id_token is a valid, unexpired JWT with a valid signature
             verify(jwtParser).parseClaimsJws(eq(null));
@@ -258,7 +258,7 @@ public class HarmonyRestControllerTest {
             // Example exception from here: http://javadox.com/io.jsonwebtoken/jjwt/0.4/io/jsonwebtoken/JwtParser.html#parseClaimsJws
             when(jwtParser.parseClaimsJws(eq(ID_TOKEN))).thenThrow(new SignatureException("Signature validation failed"));
 
-            ResponseEntity<HarmonyPageResponse> harmonyPageResponseResponseEntity = harmonyRestController.listHarmonyCourses(ID_TOKEN, 1, null, null);
+            ResponseEntity<HarmonyPageResponse> harmonyPageResponseResponseEntity = harmonyRestController.listHarmonyCourses(ID_TOKEN, 1, null);
 
             // verify id_token is a valid, unexpired JWT with a valid signature
             verify(jwtParser).parseClaimsJws(eq(ID_TOKEN));

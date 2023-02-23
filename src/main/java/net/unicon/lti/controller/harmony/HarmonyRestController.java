@@ -42,13 +42,12 @@ public class HarmonyRestController {
     LTI3Request lti3Request;
 
     @RequestMapping(value = "/courses")
-    public ResponseEntity<HarmonyPageResponse> listHarmonyCourses(@RequestHeader(value="lti-id-token") String ltiIdToken, @RequestParam(required = false) Integer page, @RequestParam(required = false, value = "root_outcome_guid") String rootOutcomeGuid, @RequestParam(required = false, value = "lti_storage_target") String ltiStorageTarget) {
+    public ResponseEntity<HarmonyPageResponse> listHarmonyCourses(@RequestHeader(value="lti-id-token") String ltiIdToken, @RequestParam(required = false) Integer page, @RequestParam(required = false, value = "root_outcome_guid") String rootOutcomeGuid) {
         //To keep this endpoint secured, we will validate the id_token
-        log.debug("ltiStorageTarget in HarmonyRestController");
-        log.debug(ltiStorageTarget);
         try {
-            // validates JWT signature, ensures existing platformDeployment, validates 1.3 format of JWT, validates nonce
-            lti3Request = new LTI3Request(ltiDataService, true, null, ltiIdToken, ltiStorageTarget);
+            // validates JWT signature, ensures existing platformDeployment, validates 1.3 format of JWT,
+            // We pass in false to skip the nonce validation here regardless of if we are using cookies or not
+            lti3Request = new LTI3Request(ltiDataService, true, null, ltiIdToken, false);
             log.debug("The id_token is valid, fetching courses....");
             // We convert the JSON response to a Java object, and send the JSON value again to the frontend.
             return ResponseEntity.ok(harmonyService.fetchHarmonyCourses(page, rootOutcomeGuid));
