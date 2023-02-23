@@ -42,7 +42,7 @@ public class HarmonyRestController {
     LTI3Request lti3Request;
 
     @RequestMapping(value = "/courses")
-    public ResponseEntity<HarmonyPageResponse> listHarmonyCourses(@RequestHeader(value="lti-id-token") String ltiIdToken, @RequestParam(required = false) Integer page, @RequestParam(required = false, value = "root_outcome_guid") String rootOutcomeGuid, @RequestParam(required = false, value = "ltiStorageTarget") String ltiStorageTarget) {
+    public ResponseEntity<HarmonyPageResponse> listHarmonyCourses(@RequestHeader(value="lti-id-token") String ltiIdToken, @RequestParam(required = false) Integer page, @RequestParam(required = false, value = "root_outcome_guid") String rootOutcomeGuid, @RequestParam(required = false, value = "lti_storage_target") String ltiStorageTarget) {
         //To keep this endpoint secured, we will validate the id_token
         log.debug("ltiStorageTarget in HarmonyRestController");
         log.debug(ltiStorageTarget);

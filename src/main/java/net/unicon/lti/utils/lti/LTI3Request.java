@@ -291,7 +291,8 @@ public class LTI3Request implements ApplicationContextAware {
      * @param request an http servlet request
      * @param ltiDataService   the service used for accessing LTI data
      * @param update  if true then update (or insert) the DB records for this request (else skip DB updating)
-     * Add more params
+     * @param linkId
+     * @param jwsClaims
      * @param ltiStorageTarget
      * @throws IllegalStateException if this is not an LTI request
      */
@@ -366,6 +367,7 @@ public class LTI3Request implements ApplicationContextAware {
         log.debug("ltiStorageTarget in LTI3Request");
         log.debug(ltiStorageTarget);
 
+        // If there is no ltiStorageTarget value then we check the nonce here for the cookie flow
         if (StringUtils.isBlank(ltiStorageTarget)) {
             //Now we are going to check the if the nonce is valid.
             String checkNonce = checkNonce(jws);
