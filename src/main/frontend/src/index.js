@@ -49,9 +49,6 @@ const initialState = {
   ltiStorageTarget: ltiLaunchData.ltiStorageTarget,
 };
 
-console.log("index.js logging");
-console.log(initialState);
-
 // Creates the store and preloads the initial state of the store.
 const store = configureStore({
   reducer: appSlice,
