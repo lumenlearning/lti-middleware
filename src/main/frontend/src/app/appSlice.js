@@ -110,7 +110,10 @@ export const fetchCourses = (page) => (dispatch, getState) => {
   // We must display an spinner when loading courses from the backend
   dispatch(setLoading(true));
   dispatch(setErrorFetchingCourses(false));
-  fetch(`/harmony/courses?page=${requestedPage}`, {
+  // We pass the 'lti_storage_target' over as a param to the /courses endpoint in the HarmonyRestController
+  // If 'lti_storage_target' is null; we have cookies and the nonce is checked in that endpoint as part of the LTI3Request
+  // If 'lti_storage_target' has a value we check the nonce as part of the lti storage flow
+  fetch(`/harmony/courses?page=${requestedPage}&lti_storage_target=${lti_storage_target}`, {
     method: 'GET',
     headers: {'lti-id-token': idToken}
   })
@@ -152,6 +155,9 @@ export const fetchSingleCourse = (rootOutcomeGuid, ltiStorageTarget) => (dispatc
   // We must display an spinner when loading courses from the backend
   dispatch(setLoading(true));
   dispatch(setErrorAssociatingCourse(false));
+  // We pass the 'lti_storage_target' over as a param to the /courses endpoint in the HarmonyRestController
+  // If 'lti_storage_target' is null; we have cookies and the nonce is checked in that endpoint as part of the LTI3Request
+  // If 'lti_storage_target' has a value we check the nonce as part of the lti storage flow
   fetch(`/harmony/courses?root_outcome_guid=${rootOutcomeGuid}&lti_storage_target=${ltiStorageTarget}`, {
     method: 'GET',
     headers: {'lti-id-token': idToken}
