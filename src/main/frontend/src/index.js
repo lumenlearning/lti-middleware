@@ -46,7 +46,11 @@ const initialState = {
   root_outcome_guid: isValidRootOutcomeGuid(ltiLaunchData.root_outcome_guid) ? ltiLaunchData.root_outcome_guid : null,
   platform_family_code: ltiLaunchData.platform_family_code,
   lti_system_error: ltiLaunchData.lti_system_error,
+  ltiStorageTarget: ltiLaunchData.ltiStorageTarget,
 };
+
+console.log("index.js logging");
+console.log(initialState);
 
 // Creates the store and preloads the initial state of the store.
 const store = configureStore({

@@ -57,7 +57,7 @@ public class LtiContextController {
             }
 
             // validate id_token, including proving existence of single platformDeployment, generate id_token object
-            LTI3Request lti3Request = LTI3Request.makeLTI3Request(ltiDataService, true, null, harmonyFetchDeepLinksBody.getIdToken());
+            LTI3Request lti3Request = LTI3Request.makeLTI3Request(ltiDataService, true, null, harmonyFetchDeepLinksBody.getIdToken(), null);
 
             // Retrieve LMS config from db to be used to find the right context
             List<PlatformDeployment> platformDeploymentList = platformDeploymentRepository.findByIssAndClientIdAndDeploymentId(lti3Request.getIss(), lti3Request.getAud(), lti3Request.getLtiDeploymentId());

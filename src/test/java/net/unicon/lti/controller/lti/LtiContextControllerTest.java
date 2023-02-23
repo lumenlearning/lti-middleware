@@ -113,7 +113,7 @@ public class LtiContextControllerTest {
     @Test
     public void testPrepareDeepLinkingResponseForLMSContextWithoutLtiContext() {
         HarmonyFetchDeepLinksBody harmonyFetchDeepLinksBody = new HarmonyFetchDeepLinksBody(SAMPLE_ROOT_OUTCOME_GUID, SAMPLE_DL_ID_TOKEN, null);
-        lti3RequestMockedStatic.when(() -> LTI3Request.makeLTI3Request(eq(ltiDataService), eq(true), eq(null), eq(SAMPLE_DL_ID_TOKEN))).thenReturn(lti3Request);
+        lti3RequestMockedStatic.when(() -> LTI3Request.makeLTI3Request(eq(ltiDataService), eq(true), eq(null), eq(SAMPLE_DL_ID_TOKEN), eq(null))).thenReturn(lti3Request);
         when(lti3Request.getLtiContextId()).thenReturn(SAMPLE_CONTEXT_ID);
         when(lti3Request.getIss()).thenReturn(SAMPLE_ISSUER);
         when(lti3Request.getAud()).thenReturn(SAMPLE_CLIENT_ID);
@@ -134,7 +134,7 @@ public class LtiContextControllerTest {
     @Test
     public void testPrepareDeepLinkingResponseForLMSContextWithoutDeepLinkingContentItemsFromHarmony() {
         HarmonyFetchDeepLinksBody harmonyFetchDeepLinksBody = new HarmonyFetchDeepLinksBody(SAMPLE_ROOT_OUTCOME_GUID, SAMPLE_DL_ID_TOKEN, null);
-        lti3RequestMockedStatic.when(() -> LTI3Request.makeLTI3Request(eq(ltiDataService), eq(true), eq(null), eq(SAMPLE_DL_ID_TOKEN))).thenReturn(lti3Request);
+        lti3RequestMockedStatic.when(() -> LTI3Request.makeLTI3Request(eq(ltiDataService), eq(true), eq(null), eq(SAMPLE_DL_ID_TOKEN), eq(null))).thenReturn(lti3Request);
         when(lti3Request.getLtiContextId()).thenReturn(SAMPLE_CONTEXT_ID);
         when(lti3Request.getIss()).thenReturn(SAMPLE_ISSUER);
         when(lti3Request.getAud()).thenReturn(SAMPLE_CLIENT_ID);
@@ -156,7 +156,7 @@ public class LtiContextControllerTest {
     @Test
     public void testPrepareDeepLinkingResponseForLMSContextWithNullDeepLinkingContentItemsFromHarmony() {
         HarmonyFetchDeepLinksBody harmonyFetchDeepLinksBody = new HarmonyFetchDeepLinksBody(SAMPLE_ROOT_OUTCOME_GUID, SAMPLE_DL_ID_TOKEN, null);
-        lti3RequestMockedStatic.when(() -> LTI3Request.makeLTI3Request(eq(ltiDataService), eq(true), eq(null), eq(SAMPLE_DL_ID_TOKEN))).thenReturn(lti3Request);
+        lti3RequestMockedStatic.when(() -> LTI3Request.makeLTI3Request(eq(ltiDataService), eq(true), eq(null), eq(SAMPLE_DL_ID_TOKEN), eq(null))).thenReturn(lti3Request);
         when(lti3Request.getLtiContextId()).thenReturn(SAMPLE_CONTEXT_ID);
         when(lti3Request.getIss()).thenReturn(SAMPLE_ISSUER);
         when(lti3Request.getAud()).thenReturn(SAMPLE_CLIENT_ID);
@@ -178,7 +178,7 @@ public class LtiContextControllerTest {
     @Test
     public void testPrepareDeepLinkingResponseForLMSContextDeepLinkingResponseGenerationThrowsException() {
         HarmonyFetchDeepLinksBody harmonyFetchDeepLinksBody = new HarmonyFetchDeepLinksBody(SAMPLE_ROOT_OUTCOME_GUID, SAMPLE_DL_ID_TOKEN, null);
-        lti3RequestMockedStatic.when(() -> LTI3Request.makeLTI3Request(eq(ltiDataService), eq(true), eq(null), eq(SAMPLE_DL_ID_TOKEN))).thenReturn(lti3Request);
+        lti3RequestMockedStatic.when(() -> LTI3Request.makeLTI3Request(eq(ltiDataService), eq(true), eq(null), eq(SAMPLE_DL_ID_TOKEN), eq(null))).thenReturn(lti3Request);
         when(lti3Request.getLtiContextId()).thenReturn(SAMPLE_CONTEXT_ID);
         when(lti3Request.getIss()).thenReturn(SAMPLE_ISSUER);
         when(lti3Request.getAud()).thenReturn(SAMPLE_CLIENT_ID);
@@ -202,7 +202,7 @@ public class LtiContextControllerTest {
     @Test
     public void testPrepareDeepLinkingResponseForLMSContext() {
         HarmonyFetchDeepLinksBody harmonyFetchDeepLinksBody = new HarmonyFetchDeepLinksBody(SAMPLE_ROOT_OUTCOME_GUID, SAMPLE_DL_ID_TOKEN, null);
-        lti3RequestMockedStatic.when(() -> LTI3Request.makeLTI3Request(eq(ltiDataService), eq(true), eq(null), eq(SAMPLE_DL_ID_TOKEN))).thenReturn(lti3Request);
+        lti3RequestMockedStatic.when(() -> LTI3Request.makeLTI3Request(eq(ltiDataService), eq(true), eq(null), eq(SAMPLE_DL_ID_TOKEN), eq(null))).thenReturn(lti3Request);
         when(lti3Request.getLtiContextId()).thenReturn(SAMPLE_CONTEXT_ID);
         when(lti3Request.getIss()).thenReturn(SAMPLE_ISSUER);
         when(lti3Request.getAud()).thenReturn(SAMPLE_CLIENT_ID);
@@ -258,7 +258,7 @@ public class LtiContextControllerTest {
     public void testPairBookWithoutLtiContext() {
         try {
             HarmonyFetchDeepLinksBody harmonyFetchDeepLinksBody = new HarmonyFetchDeepLinksBody(SAMPLE_ROOT_OUTCOME_GUID, SAMPLE_DL_ID_TOKEN, null);
-            lti3RequestMockedStatic.when(() -> LTI3Request.makeLTI3Request(eq(ltiDataService), eq(true), eq(null), eq(SAMPLE_DL_ID_TOKEN))).thenReturn(lti3Request);
+            lti3RequestMockedStatic.when(() -> LTI3Request.makeLTI3Request(eq(ltiDataService), eq(true), eq(null), eq(SAMPLE_DL_ID_TOKEN), eq(null))).thenReturn(lti3Request);
             when(lti3Request.getLtiContextId()).thenReturn(SAMPLE_CONTEXT_ID);
             when(lti3Request.getIss()).thenReturn(SAMPLE_ISSUER);
             when(lti3Request.getAud()).thenReturn(SAMPLE_CLIENT_ID);
@@ -280,7 +280,7 @@ public class LtiContextControllerTest {
     public void testPairBookWithoutDeepLinkingContentItemsFromHarmony() {
         try {
             HarmonyFetchDeepLinksBody harmonyFetchDeepLinksBody = new HarmonyFetchDeepLinksBody(SAMPLE_ROOT_OUTCOME_GUID, SAMPLE_DL_ID_TOKEN, null);
-            lti3RequestMockedStatic.when(() -> LTI3Request.makeLTI3Request(eq(ltiDataService), eq(true), eq(null), eq(SAMPLE_DL_ID_TOKEN))).thenReturn(lti3Request);
+            lti3RequestMockedStatic.when(() -> LTI3Request.makeLTI3Request(eq(ltiDataService), eq(true), eq(null), eq(SAMPLE_DL_ID_TOKEN), eq(null))).thenReturn(lti3Request);
             when(lti3Request.getLtiContextId()).thenReturn(SAMPLE_CONTEXT_ID);
             when(lti3Request.getIss()).thenReturn(SAMPLE_ISSUER);
             when(lti3Request.getAud()).thenReturn(SAMPLE_CLIENT_ID);
@@ -303,7 +303,7 @@ public class LtiContextControllerTest {
     public void testPairBookWithNullDeepLinkingContentItemsFromHarmony() {
         try {
             HarmonyFetchDeepLinksBody harmonyFetchDeepLinksBody = new HarmonyFetchDeepLinksBody(SAMPLE_ROOT_OUTCOME_GUID, SAMPLE_DL_ID_TOKEN, null);
-            lti3RequestMockedStatic.when(() -> LTI3Request.makeLTI3Request(eq(ltiDataService), eq(true), eq(null), eq(SAMPLE_DL_ID_TOKEN))).thenReturn(lti3Request);
+            lti3RequestMockedStatic.when(() -> LTI3Request.makeLTI3Request(eq(ltiDataService), eq(true), eq(null), eq(SAMPLE_DL_ID_TOKEN), eq(null))).thenReturn(lti3Request);
             when(lti3Request.getLtiContextId()).thenReturn(SAMPLE_CONTEXT_ID);
             when(lti3Request.getIss()).thenReturn(SAMPLE_ISSUER);
             when(lti3Request.getAud()).thenReturn(SAMPLE_CLIENT_ID);
@@ -326,7 +326,7 @@ public class LtiContextControllerTest {
     public void testPairBookDeepLinkingResponseGenerationThrowsException() {
         try {
             HarmonyFetchDeepLinksBody harmonyFetchDeepLinksBody = new HarmonyFetchDeepLinksBody(SAMPLE_ROOT_OUTCOME_GUID, SAMPLE_DL_ID_TOKEN, null);
-            lti3RequestMockedStatic.when(() -> LTI3Request.makeLTI3Request(eq(ltiDataService), eq(true), eq(null), eq(SAMPLE_DL_ID_TOKEN))).thenReturn(lti3Request);
+            lti3RequestMockedStatic.when(() -> LTI3Request.makeLTI3Request(eq(ltiDataService), eq(true), eq(null), eq(SAMPLE_DL_ID_TOKEN), eq(null))).thenReturn(lti3Request);
             when(lti3Request.getLtiContextId()).thenReturn(SAMPLE_CONTEXT_ID);
             when(lti3Request.getIss()).thenReturn(SAMPLE_ISSUER);
             when(lti3Request.getAud()).thenReturn(SAMPLE_CLIENT_ID);
@@ -351,7 +351,7 @@ public class LtiContextControllerTest {
     public void testPairBook() {
         try {
             HarmonyFetchDeepLinksBody harmonyFetchDeepLinksBody = new HarmonyFetchDeepLinksBody(SAMPLE_ROOT_OUTCOME_GUID, SAMPLE_DL_ID_TOKEN, null);
-            lti3RequestMockedStatic.when(() -> LTI3Request.makeLTI3Request(eq(ltiDataService), eq(true), eq(null), eq(SAMPLE_DL_ID_TOKEN))).thenReturn(lti3Request);
+            lti3RequestMockedStatic.when(() -> LTI3Request.makeLTI3Request(eq(ltiDataService), eq(true), eq(null), eq(SAMPLE_DL_ID_TOKEN), eq(null))).thenReturn(lti3Request);
             when(lti3Request.getLtiContextId()).thenReturn(SAMPLE_CONTEXT_ID);
             when(lti3Request.getIss()).thenReturn(SAMPLE_ISSUER);
             when(lti3Request.getAud()).thenReturn(SAMPLE_CLIENT_ID);
@@ -383,7 +383,7 @@ public class LtiContextControllerTest {
             moduleIds.add("module-id-2");
             moduleIds.add("module-id-3");
             HarmonyFetchDeepLinksBody harmonyFetchDeepLinksBody = new HarmonyFetchDeepLinksBody(SAMPLE_ROOT_OUTCOME_GUID, SAMPLE_DL_ID_TOKEN, moduleIds);
-            lti3RequestMockedStatic.when(() -> LTI3Request.makeLTI3Request(eq(ltiDataService), eq(true), eq(null), eq(SAMPLE_DL_ID_TOKEN))).thenReturn(lti3Request);
+            lti3RequestMockedStatic.when(() -> LTI3Request.makeLTI3Request(eq(ltiDataService), eq(true), eq(null), eq(SAMPLE_DL_ID_TOKEN), eq(null))).thenReturn(lti3Request);
             when(lti3Request.getLtiContextId()).thenReturn(SAMPLE_CONTEXT_ID);
             when(lti3Request.getIss()).thenReturn(SAMPLE_ISSUER);
             when(lti3Request.getAud()).thenReturn(SAMPLE_CLIENT_ID);
