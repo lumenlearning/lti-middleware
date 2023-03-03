@@ -1,37 +1,38 @@
 // Redux imports
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
 
 // Store imports
 import {
-  selectSelectedCourse,
   selectLoading,
-  selectLtiSystemError
-} from './app/appSlice';
+  selectLtiSystemError,
+  selectSelectedCourse,
+} from "./app/appSlice";
 
 // Components import
-import Container from 'react-bootstrap/Container';
-import CoursePreview from './features/CoursePreview';
-import CoursePicker from './features/CoursePicker';
-import ErrorAlert from './features/alerts/ErrorAlert';
-import LoadingCoursesPage from './features/LoadingCoursesPage';
-import LtiBreadcrumb from './features/LtiBreadcrumb';
+import Container from "react-bootstrap/Container";
+import { ErrorMessage } from "./error/ErrorMessage";
+import ErrorAlert from "./features/alerts/ErrorAlert";
+import CoursePicker from "./features/CoursePicker";
+import CoursePreview from "./features/CoursePreview";
+import LoadingCoursesPage from "./features/LoadingCoursesPage";
+import LtiBreadcrumb from "./features/LtiBreadcrumb";
 
 // Stylesheet imports
-import './App.css';
 import "@fontsource/lato";
 import "@fontsource/public-sans";
+import "./App.css";
 
 // Utils
-import { LTI_SYSTEM_ERRORS } from './util/LtiSystemErrors';
+import { LTI_SYSTEM_ERRORS } from "./util/LtiSystemErrors";
 
 function App() {
-
   // The window will never notice if the user is browsing in long contents or not, should always scroll to top when navigating across courses.
   window.scrollTo(0, 0);
 
   const selectedCourse = useSelector(selectSelectedCourse);
   const ltiSystemErrorCode = useSelector(selectLtiSystemError);
   const isLoading = useSelector(selectLoading);
+  const ltiError = true;
 
   // When there's a system error from the backend we must inform the user and do not render any content.
   if (Number.isInteger(parseInt(ltiSystemErrorCode))) {
@@ -53,9 +54,13 @@ function App() {
         systemErrorMessage = `Unrecognized error message. Please try again. If the issue persists, please contact Lumen Support.`;
         break;
     }
-    return <Container className="App" fluid role="main">
-             <div className="mt-3"><ErrorAlert message={systemErrorMessage} /></div>
-           </Container>;
+    return (
+      <Container className="App" fluid role="main">
+        <div className="mt-3">
+          <ErrorAlert message={systemErrorMessage} />
+        </div>
+      </Container>
+    );
   }
 
   // When courses are being loaded display a loading page.
@@ -63,14 +68,24 @@ function App() {
     return <LoadingCoursesPage />;
   }
 
-  // When a course has been selected display the course preview.
-  return <>
-           <LtiBreadcrumb course={selectedCourse} />
-           <Container className="App coursePreview" fluid role="main">
-             {selectedCourse ? <CoursePreview course={selectedCourse} /> : <CoursePicker />}
-           </Container>
-         </>;
+  //WIP: lti error message
+  if (ltiError) {
+    return <ErrorMessage />;
+  }
 
+  // When a course has been selected display the course preview.
+  return (
+    <>
+      <LtiBreadcrumb course={selectedCourse} />
+      <Container className="App coursePreview" fluid role="main">
+        {selectedCourse ? (
+          <CoursePreview course={selectedCourse} />
+        ) : (
+          <CoursePicker />
+        )}
+      </Container>
+    </>
+  );
 }
 
 export default App;
