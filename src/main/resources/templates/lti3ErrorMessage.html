@@ -1,0 +1,134 @@
+<!--
+
+    Copyright 2021 Unicon (R)
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!DOCTYPE html>
+<!--suppress CheckEmptyScriptTag -->
+<html xmlns:th="http://www.thymeleaf.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.thymeleaf.org
+http://www.thymeleaf.org " xml:lang="en">
+
+<head>
+    <!-- <title>Error</title> -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+
+<body>
+    <div class="error-container">
+        <div class="error-message-wrapper">
+            <h3>Something's not working. Please try again later. </h3>
+            <p>
+                If the issue persists, contact
+                <a href="http://support.lumenlearning.com/" rel="noreferrer" target="_blank">
+                    Lumen Support
+                </a>
+                .
+            </p>
+            <img src="../../frontend/src/svg/ErrorIllustration.svg" alt="Error Illustrtation">
+        </div>
+        <div class="error-message-attribution">
+            <a href="https://storyset.com/people">
+                People Illustrations by Storyset
+            </a>
+        </div>
+    </div>
+
+</body>
+
+<style>
+    :root {
+        --indigo_500: #5367EA;
+        --light_gray: #F4F3EF;
+        --primary_text: #202325;
+        --secondary_text: #636566;
+        --white: #ffffff;
+    }
+
+    @font-face {
+        font-family: 'Public Sans';
+        font-style: normal;
+        font-weight: 400;
+        src: url(../../frontend/src/styles/fonts/public_sans_400.woff2) format('woff2');
+    }
+
+    @font-face {
+        font-family: 'Public Sans';
+        font-style: normal;
+        font-weight: 600;
+        src: url(../../frontend/src/styles/fonts/public_sans_600.woff2) format('woff2');
+    }
+
+    @font-face {
+        font-family: 'Public Sans';
+        font-style: normal;
+        font-weight: 700;
+        src: url(../../frontend/src/styles/fonts/public_sans_700.woff2) format('woff2');
+    }
+
+    body {
+        background-color: var(--light_gray);
+        color: var(--primary_text);
+        font-family: 'Public Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 1.4;
+        margin: 0;
+        padding: 0;
+
+    }
+
+    h3 {
+        font-size: 26px;
+        font-weight: 600;
+        line-height: 1.2;
+    }
+
+    .error-container {
+        background-color: var(--light_gray);
+        padding-top: 40px;
+        padding-right: 20px;
+        padding-left: 20px;
+    }
+
+    .error-message-wrapper {
+        padding: 40px;
+        background-color: var(--white);
+        border-radius: 10px;
+        text-align: center;
+    }
+
+    .error-message-wrapper img {
+        max-width: 100%;
+        max-height: 378px;
+    }
+
+    .error-message-wrapper a {
+        color: var(--indigo_500);
+        font-weight: 700;
+    }
+
+    .error-message-wrapper p {
+        font-size: 16px;
+        line-height: 1.6;
+    }
+
+    .error-message-attribution {
+        margin-top: 20px;
+        text-align: right;
+    }
+
+    .error-message-attribution a {
+        color: var(--secondary_text)
+    }
+</style>
+
+</html>
