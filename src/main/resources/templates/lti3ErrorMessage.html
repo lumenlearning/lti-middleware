@@ -18,21 +18,20 @@
 http://www.thymeleaf.org " xml:lang="en">
 
 <head>
-    <!-- <title>Error</title> -->
+    <title>Error</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 
 <body>
     <div class="error-container">
         <div class="error-message-wrapper">
-            <h3>Something's not working. Please try again later. </h3>
-            <p>
-                If the issue persists, contact
-                <a href="http://support.lumenlearning.com/" rel="noreferrer" target="_blank">
-                    Lumen Support
-                </a>
-                .
-            </p>
+            <div>
+                <h3>Something's not working. Please try again later. </h3>
+                <p>
+                    If the issue persists, contact
+                    <a href="http://support.lumenlearning.com/" rel="noreferrer" target="_blank">Lumen Support</a>.
+                </p>
+            </div>
             <img src="../../frontend/src/svg/ErrorIllustration.svg" alt="Error Illustrtation">
         </div>
         <div class="error-message-attribution">
@@ -90,6 +89,7 @@ http://www.thymeleaf.org " xml:lang="en">
         font-size: 26px;
         font-weight: 600;
         line-height: 1.2;
+        margin: 0;
     }
 
     .error-container {
@@ -104,6 +104,9 @@ http://www.thymeleaf.org " xml:lang="en">
         background-color: var(--white);
         border-radius: 10px;
         text-align: center;
+        display: grid;
+        grid-gap: 20px;
+        justify-content: center;
     }
 
     .error-message-wrapper img {
@@ -119,6 +122,7 @@ http://www.thymeleaf.org " xml:lang="en">
     .error-message-wrapper p {
         font-size: 16px;
         line-height: 1.6;
+        margin: 0;
     }
 
     .error-message-attribution {
