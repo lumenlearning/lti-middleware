@@ -45,6 +45,7 @@ http://www.thymeleaf.org " xml:lang="en">
 
 <style>
     :root {
+        --grape_600: #330675;
         --indigo_500: #5367EA;
         --light_gray: #F4F3EF;
         --primary_text: #202325;
@@ -115,8 +116,30 @@ http://www.thymeleaf.org " xml:lang="en">
     }
 
     .error-message-wrapper a {
+        background-image: linear-gradient(to right, #5367ea, #5367ea),
+            linear-gradient(to right, #5367ea, #5367ea);
+        background-position: 100% 100%, 0 100%;
+        background-repeat: no-repeat;
+        background-size: 0 0.075em, 100% 0.075em;
         color: var(--indigo_500);
         font-weight: 700;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 150ms;
+    }
+
+    .error-message-wrapper a:hover,
+    .error-message-wrapper a:focus {
+        color: var(--grape_600);
+        background-image: linear-gradient(to right, #5367ea, #5367ea),
+            linear-gradient(to right, #5367ea 30%, #4252bb 70%, #330675);
+        background-position: 100% 100%, 0 100%;
+        background-size: 0 0.075em, 100% 0.15em;
+    }
+
+    .error-message-wrapper a:focus {
+        outline: 2px solid var(--white);
+        box-shadow: 0px 0px 0px 4px var(--primary_text);
     }
 
     .error-message-wrapper p {

@@ -58,8 +58,28 @@ const ErrorMessageWrapper = styled.div`
   }
 
   a {
+    background-image: linear-gradient(to right, #5367ea, #5367ea),
+      linear-gradient(to right, #5367ea, #5367ea);
+    background-position: 100% 100%, 0 100%;
+    background-repeat: no-repeat;
+    background-size: 0 0.075em, 100% 0.075em;
     color: ${EColor.indigo_500};
     font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 150ms;
+    &:hover,
+    &:focus {
+      color: ${EColor.grape_600};
+      background-image: linear-gradient(to right, #5367ea, #5367ea),
+        linear-gradient(to right, #5367ea 30%, #4252bb 70%, #330675);
+      background-position: 100% 100%, 0 100%;
+      background-size: 0 0.075em, 100% 0.15em;
+    }
+    &:focus {
+      outline: 2px solid ${EColor.white};
+      box-shadow: 0px 0px 0px 4px ${EColor.primary_text};
+    }
   }
 
   p {
