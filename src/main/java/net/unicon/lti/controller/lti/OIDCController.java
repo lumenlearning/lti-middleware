@@ -140,7 +140,7 @@ public class OIDCController {
                     return "redirect:" + parameters.get("oicdEndpointComplete");
                 } else {
                     model.addAttribute("state", parameters.get("state"));
-                    model.addAttribute("nonce", parameters.get("nonce"));
+                    model.addAttribute("nonce", parameters.get("nonce_hash"));
                     model.addAttribute("lti_storage_target", parameters.get("ltiStorageTarget"));
                     model.addAttribute("oidc_endpoint_complete", parameters.get("oicdEndpointComplete"));
                     model.addAttribute("login_hint", parameters.get("loginHint"));
