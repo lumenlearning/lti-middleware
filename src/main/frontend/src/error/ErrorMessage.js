@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { EColor } from "../styles/HarmonyColors";
 import { HarmonyFonts } from "../styles/HarmonyFonts.js";
-import ErrorIllustration from "../svg/ErrorIllustration.svg";
+import ErrorIllustration from "../svg/ErrorIllustration.svg.jsx";
 
 const ErrorMessage = () => {
   return (
@@ -9,18 +9,20 @@ const ErrorMessage = () => {
       <HarmonyFonts />
       <Container>
         <ErrorMessageWrapper>
-          <h3>Something's not working. Please try again later. </h3>
-          <p>
-            If the issue persists, contact{" "}
-            <a
-              href="http://support.lumenlearning.com/"
-              rel="noreferrer"
-              target="_blank"
-            >
-              Lumen Support
-            </a>
-            .
-          </p>
+          <div>
+            <h3>Something's not working. Please try again later. </h3>
+            <p>
+              If the issue persists, contact{" "}
+              <a
+                href="http://support.lumenlearning.com/"
+                rel="noreferrer"
+                target="_blank"
+              >
+                Lumen Support
+              </a>
+              .
+            </p>
+          </div>
           <ErrorIllustration />
         </ErrorMessageWrapper>
         <ErrorIllustrationAttribution>
@@ -46,6 +48,9 @@ const ErrorMessageWrapper = styled.div`
   border-radius: 10px;
   text-align: center;
   font-family: "Public Sans";
+  display: grid;
+  grid-gap: 20px;
+  justify-content: center;
 
   svg {
     max-width: 100%;
@@ -60,6 +65,7 @@ const ErrorMessageWrapper = styled.div`
   p {
     font-size: 16px;
     line-height: 1.6;
+    margin: 0;
   }
 `;
 
