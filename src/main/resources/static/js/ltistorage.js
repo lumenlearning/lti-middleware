@@ -166,36 +166,36 @@ class LtiStorage {
     //TODO: this function is not used - do we need it?
     // Check cookie first
     if (
-      document.cookie
-        .split("; ")
-        .includes(LtiStorage.cookiePrefix + "_state_" + state + "=" + state) &&
-      document.cookie
-        .split("; ")
-        .includes(LtiStorage.cookiePrefix + "_nonce_" + nonce + "=" + nonce)
-    ) {
-      // Found state in cookie, return true
-      return false;
-    }
-    let platformStorage = this.ltiPostMessage(platformOrigin, launchFrame);
-    return platformStorage
-      .getData(LtiStorage.cookiePrefix + "_state_" + state)
-      .then((value) => {
-        if (!value || state !== value) {
-           return false;
+          document.cookie
+            .split("; ")
+            .includes(LtiStorage.cookiePrefix + "_state_" + state + "=" + state) &&
+          document.cookie
+            .split("; ")
+            .includes(LtiStorage.cookiePrefix + "_nonce_" + nonce + "=" + nonce)
+        ) {
+          // Found state in cookie, return true
+          return Promise.resolve(true);
         }
-        return platformStorage.getData(
-          LtiStorage.cookiePrefix + "_nonce_" + nonce
-        );
-      })
-      .then((value) => {
-        if (!value || nonce !== value) {
-          return false;
-        }
-       return true;
-      })
-      .catch(() => {
-        return false;
-      });
+        let platformStorage = this.ltiPostMessage(platformOrigin, launchFrame);
+        return platformStorage
+          .getData(LtiStorage.cookiePrefix + "_state_" + state)
+          .then((value) => {
+            if (!value || state !== value) {
+              return Promise.reject();
+            }
+            return platformStorage.getData(
+              LtiStorage.cookiePrefix + "_nonce_" + nonce
+            );
+          })
+          .then((value) => {
+            if (!value || nonce !== value) {
+              return Promise.reject();
+            }
+            return true;
+          })
+          .catch(() => {
+            return false;
+          });
   }
   ltiPostMessage(targetOrigin, launchFrame) {
     return new LtiPostMessage(
@@ -379,7 +379,7 @@ class LtiPostMessage {
             "m",
             _LtiPostMessage_getTargetWindow
           ).call(this),
-          undefined,
+          "*",
           capabilities.supported_messages[i].frame
         );
       }
