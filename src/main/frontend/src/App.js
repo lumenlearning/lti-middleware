@@ -10,7 +10,6 @@ import {
 
 // Components import
 import Container from "react-bootstrap/Container";
-import { ErrorMessage } from "./error/ErrorMessage";
 import ErrorAlert from "./features/alerts/ErrorAlert";
 import CoursePicker from "./features/CoursePicker";
 import CoursePreview from "./features/CoursePreview";
@@ -32,7 +31,6 @@ function App() {
   const selectedCourse = useSelector(selectSelectedCourse);
   const ltiSystemErrorCode = useSelector(selectLtiSystemError);
   const isLoading = useSelector(selectLoading);
-  const ltiError = true;
 
   // When there's a system error from the backend we must inform the user and do not render any content.
   if (Number.isInteger(parseInt(ltiSystemErrorCode))) {
@@ -66,11 +64,6 @@ function App() {
   // When courses are being loaded display a loading page.
   if (isLoading) {
     return <LoadingCoursesPage />;
-  }
-
-  //WIP: lti error message
-  if (ltiError) {
-    return <ErrorMessage />;
   }
 
   // When a course has been selected display the course preview.
