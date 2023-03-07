@@ -1,4 +1,4 @@
-//this was copied over from Valkyrie
+//this was copied over from Valkyrie following the Harmony Global Style Guide
 import { createGlobalStyle } from "styled-components";
 import Lora from "./fonts/lora_regular.woff2";
 import PublicSans400 from "./fonts/public_sans_400.woff2";

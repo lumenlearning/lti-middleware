@@ -1,4 +1,4 @@
-//These colors have been copied over from Valkyrie
+//These colors have been copied over from the Harmony Global Style Guide
 
 const EColor = {
   blush_100: "#FFFBFA",
