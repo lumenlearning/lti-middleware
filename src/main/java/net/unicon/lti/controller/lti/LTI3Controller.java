@@ -221,10 +221,8 @@ public class LTI3Controller {
                     model.addAttribute("ltiServiceUrl", ltiDataService.getLocalUrl());
                     model.addAttribute("state", state);
                     model.addAttribute("lti_storage_target", ltiStorageTarget);
-
-                    log.debug("ltiStorageTarget in LTI3Controller (2)");
-                    log.debug(ltiStorageTarget);
-
+                    model.addAttribute("nonce", lti3Request.getNonce());
+                    
                     log.debug("Deep Linking menu opening for iss: {}, client_id: {}, deployment_id: {}, context: {}, and root_outcome_guid: {}",
                             lti3Request.getIss(), clientIdFromState, deploymentIdFromState, lti3Request.getLtiContextId(), ltiContext.getRootOutcomeGuid());
 
