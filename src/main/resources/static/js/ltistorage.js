@@ -163,7 +163,6 @@ class LtiStorage {
     form.submit();
   }
   async validateStateAndNonce(state, nonce, platformOrigin, launchFrame) {
-    //TODO: this function is not used - do we need it?
     // Check cookie first
     if (
           document.cookie
