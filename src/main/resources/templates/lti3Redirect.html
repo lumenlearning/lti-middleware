@@ -26,12 +26,10 @@
     <script th:inline="javascript">
         let state = [[${ state }]];
         let nonce = [[${ nonce }]];
-        console.log("nonce from lti3controller: ", nonce)
         let platformOrigin = [[${ iss }]]
 
-        let motherMayIRedirect = new LtiStorage().validateStateAndNonce(state, nonce, platformOrigin, window)
-        motherMayIRedirect.then(function(result) {
-            console.log(result)
+        let stateAndNonceCheck = new LtiStorage().validateStateAndNonce(state, nonce, platformOrigin, window)
+        stateAndNonceCheck.then(function(result) {
             if (result === true){
                 document.redirectForm.submit();
             }

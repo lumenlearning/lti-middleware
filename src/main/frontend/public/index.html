@@ -26,9 +26,8 @@
           nonce: '[[${nonce}]]'
         };
 
-        let motherMayIRedirect = new LtiStorage().validateStateAndNonce(ltiLaunchData.state, ltiLaunchData.nonce, ltiLaunchData.iss, window)
-        motherMayIRedirect.then(function(result) {
-            console.log(result)
+        let stateAndNonceCheck = new LtiStorage().validateStateAndNonce(ltiLaunchData.state, ltiLaunchData.nonce, ltiLaunchData.iss, window)
+        stateAndNonceCheck.then(function(result) {
             if (result === true){
               document.getElementById('root').setAttribute('lti-launch-data', JSON.stringify(ltiLaunchData));
             }
