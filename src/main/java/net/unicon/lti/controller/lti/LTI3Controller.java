@@ -99,8 +99,6 @@ public class LTI3Controller {
         //We will use this link to find the content to display.
         String link = req.getParameter("link");
         String ltiStorageTarget = req.getParameter("lti_storage_target");
-        log.debug("ltiStorageTarget in LTI3Controller (1)");
-        log.debug(ltiStorageTarget);
         String altDomain = req.getHeader("x-formated-host");
         if (StringUtils.isNotBlank(altDomain)){
             String extractedDomain = DomainUtils.extractDomain(altDomain);

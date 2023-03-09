@@ -95,9 +95,6 @@ public class LTI3OAuthProviderProcessingFilter extends GenericFilterBean {
             String state = httpServletRequest.getParameter("state");
             String link = httpServletRequest.getParameter("link");
 
-            log.debug("LTI3OAuthProcessingFilter logging for lti_storage_target:");
-            log.debug(httpServletRequest.getParameter("lti_storage_target"));
-
             // Verify if lti_storage_target is present. If not, we want to use the cookie path
             if (StringUtils.isBlank(httpServletRequest.getParameter("lti_storage_target"))) {
                 // Second, we make sure the browser has a state cookie

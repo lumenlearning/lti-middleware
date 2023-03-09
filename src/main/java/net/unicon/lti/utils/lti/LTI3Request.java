@@ -383,9 +383,6 @@ public class LTI3Request implements ApplicationContextAware {
             throw new IllegalStateException("Request is not a valid LTI3 request: " + isLTI3Request);
         }
 
-        log.debug("ltiStorageTarget in LTI3Request");
-        log.debug(ltiStorageTarget);
-
         // If forceNonceCheck is true and there is no ltiStorageTarget value then we check the nonce here for the cookie flow
         if (forceNonceCheck && StringUtils.isBlank(ltiStorageTarget)) {
             //Now we are going to check the if the nonce is valid.
