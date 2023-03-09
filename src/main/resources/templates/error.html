@@ -20,8 +20,6 @@ http://www.thymeleaf.org " xml:lang="en">
 <head>
     <title>Error</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}" />
-    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
 </head>
 
 <body>
@@ -46,7 +44,7 @@ http://www.thymeleaf.org " xml:lang="en">
 
 </body>
 
-<style>
+<style th:inline="css">
     :root {
         --grape_600: #330675;
         --indigo_500: #5367EA;
@@ -54,6 +52,27 @@ http://www.thymeleaf.org " xml:lang="en">
         --primary_text: #202325;
         --secondary_text: #636566;
         --white: #ffffff;
+    }
+
+    @font-face {
+        font-family: "Public Sans";
+        font-style: normal;
+        font-weight: 400;
+        src: url("[(@{/css/public_sans_400.woff2})]");
+    }
+
+    @font-face {
+        font-family: "Public Sans";
+        font-style: normal;
+        font-weight: 600;
+        src: url("[(@{/css/public_sans_600.woff2})]");
+    }
+
+    @font-face {
+        font-family: "Public Sans";
+        font-style: normal;
+        font-weight: 700;
+        src: url("[(@{/css/public_sans_700.woff2})]");
     }
 
     body {
