@@ -38,7 +38,7 @@ public class TextConstants {
     public static final String BEARER = "Bearer ";
     public static final String ERROR_DEEP_RESPONSE = "Error creating the DeepLinking Response";
     public static final String NOT_FOUND_SUFFIX = " not found";
-    public static final String LTI3ERROR = "lti3Error";
+    public static final String LTI3ERROR = "error";
     public static final String NOT_ENOUGH_PERMISSIONS = "Error 104: Not enough permissions to access to this endpoint.";
     public static final String BAD_TOKEN = "The token does not contain the expected information";
     public static final String LINEITEM_TYPE = "application/vnd.ims.lis.v2.lineitem+json";

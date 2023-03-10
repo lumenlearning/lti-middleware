@@ -1,5 +1,5 @@
 body {
-    margin: 10px;
+  margin: 10px;
 }
 
 .large-font {
@@ -7,27 +7,27 @@ body {
 }
 
 .error-msg {
-  font-family: 'Public Sans', sans-serif;
+  font-family: "Public Sans", sans-serif;
   font-style: normal;
   font-weight: 400;
   line-height: 24px;
   font-weight: 400;
-  }
-  
-.error-msg p{
-      font-size: 18px;
-  }
-  
-.error-msg a{
-    font-size: 14px;
-  }
-  
+}
+
+.error-msg p {
+  font-size: 18px;
+}
+
+.error-msg a {
+  font-size: 14px;
+}
+
 .error-container {
   position: absolute;
   display: flex;
   flex-direction: column;
   align-items: center;
-  }
+}
 
 .accordion {
   background-color: #eee;
@@ -43,7 +43,8 @@ body {
 }
 
 /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
-.active, .accordion:hover {
+.active,
+.accordion:hover {
   background-color: #ccc;
 }
 
@@ -55,8 +56,8 @@ body {
   overflow: hidden;
 }
 
- .accordion:after {
-  content: '\2304'; /* Unicode character for "plus" sign (+) */
+.accordion:after {
+  content: "\2304"; /* Unicode character for "plus" sign (+) */
   color: #777;
   float: right;
 }

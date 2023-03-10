@@ -299,12 +299,12 @@ public class LTI3Controller {
             log.debug("Timeout has occurred.");
             log.debug("middlewareState: " + req.getParameter("middlewareState"));
             log.debug("lmsTimedOut: " + req.getParameter("lmsTimedOut"));
-            return "lti3safarierror";
+            return "error";
         } else {
             log.debug("lmsState and middlewareState do not match.");
             log.debug("lmsState: " + req.getParameter("lmsState"));
             log.debug("middlewareState: " + req.getParameter("middlewareState"));
-            return "lti3safarierror";
+            return "error";
         }
     }
 
