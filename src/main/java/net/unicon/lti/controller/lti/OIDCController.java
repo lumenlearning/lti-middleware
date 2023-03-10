@@ -143,10 +143,11 @@ public class OIDCController {
                     model.addAttribute("nonce", parameters.get("nonce_hash"));
                     model.addAttribute("lti_storage_target", parameters.get("ltiStorageTarget"));
                     model.addAttribute("oidc_endpoint_complete", parameters.get("oicdEndpointComplete"));
-                    model.addAttribute("login_hint", parameters.get("loginHint"));
+                    model.addAttribute("login_hint", parameters.get("login_hint"));
                     model.addAttribute("lti_message_hint", parameters.get("lti_message_hint"));
                     model.addAttribute("oicdEndpoint", parameters.get("oicdEndpoint"));
                     model.addAttribute("client_id", parameters.get("client_id"));
+                    model.addAttribute("redirect_uri", parameters.get("redirect_uri"));
                     return "oidcLtiStorage";
                 }
             } else {

@@ -25,15 +25,15 @@
           ltiStorageTarget: '[[${lti_storage_target}]]',
           nonce: '[[${nonce}]]'
         };
-
-        let stateAndNonceCheck = new LtiStorage().validateStateAndNonce(ltiLaunchData.state, ltiLaunchData.nonce, ltiLaunchData.iss, window)
+        console.log("issuer from deeplinking", ltiLaunchData.iss);
+        let stateAndNonceCheck = new LtiStorage().validateStateAndNonce(ltiLaunchData.state, ltiLaunchData.nonce, ltiLaunchData.iss, window);
         stateAndNonceCheck.then(function(result) {
+            console.log("result from validateState", result);
             if (result === true){
+              <!--/* We have to set an attribute to the root element so the APP can use the values of the LTI launch data. */-->
               document.getElementById('root').setAttribute('lti-launch-data', JSON.stringify(ltiLaunchData));
             }
         });
-        <!--/* We have to set an attribute to the root element so the APP can use the values of the LTI launch data. */-->
-        document.getElementById('root').setAttribute('lti-launch-data', JSON.stringify(ltiLaunchData));
     </script>
   </body>
 </html>

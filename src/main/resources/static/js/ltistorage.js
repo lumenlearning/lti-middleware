@@ -243,7 +243,8 @@ class LtiPostMessage {
     _LtiPostMessage_instances.add(this);
     _LtiPostMessage_debug.set(this, false);
     __classPrivateFieldSet(this, _LtiPostMessage_debug, debug, "f");
-    this._targetOrigin = targetOrigin;
+    this._targetOrigin = new URL(targetOrigin);
+    console.log("constructor: ", this._targetOrigin);
     this._launchFrame = launchFrame || window;
   }
 
@@ -254,6 +255,7 @@ class LtiPostMessage {
       );
       let timeout;
       let targetOrigin = originOverride || this._targetOrigin.origin;
+      console.log("target origin", targetOrigin);
       let targetFrame;
       try {
         targetFrame = __classPrivateFieldGet(
