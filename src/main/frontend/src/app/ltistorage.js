@@ -64,22 +64,18 @@ class LtiStorage {
             return Promise.resolve(true);
         }
         let platformStorage = this.ltiPostMessage(platformOrigin, launchFrame);
-        console.log("platformStorage var", platformStorage);
-        console.log("platformStorage cookiePrefix", LtiStorage.cookiePrefix);
-        console.log("platformStorage state", state);
+//        console.log("validateStateAndNonce - platformStorage", platformStorage);
+//        console.log("validateStateAndNonce - cookiePrefix", LtiStorage.cookiePrefix);
+//        console.log("validateStateAndNonce - state", state);
         return platformStorage.getData(LtiStorage.cookiePrefix + '_state_' + state)
             .then((value) => {
             if (!value || state !== value) {
-                console.log("platformStorage value 2", value);
-                console.log("platformStorage state 2", state);
                 return Promise.reject();
             }
             return platformStorage.getData(LtiStorage.cookiePrefix + '_nonce_' + nonce);
         })
             .then((value) => {
             if (!value || nonce !== value) {
-                console.log("platformStorage value 2", value);
-                console.log("platformStorage nonce 2", nonce);
                 return Promise.reject();
             }
             return true;
@@ -101,7 +97,7 @@ class LtiStorage {
 LtiStorage.cookiePrefix = 'lti';
 class LtiPostMessage {
     constructor(targetOrigin, launchFrame) {
-        this._targetOrigin = targetOrigin;
+        this._targetOrigin = new URL(targetOrigin);
         this._launchFrame = launchFrame || window;
     }
     static secureRandom(length) {
@@ -127,9 +123,8 @@ class LtiPostMessage {
             }
             const messageHandler = (event) => {
                 if (event.data.message_id !== data.message_id) {
-                    console.log("messageHandler - data.message_id", data.message_id);
-                    console.log("messageHandler - event", event);
-                    console.log("messageHandler - data.message_id", data.message_id);
+                    console.log("sendPostMessage - messageHandler (inside if) - data.message_id", data.message_id);
+                    console.log("sendPostMessage - messageHandler (inside if)- event", event);
                     //log.error({message: 'Ignoring message, invalid message_id: [' + event.data.message_id + '] expected: [' + data.message_id + ']'});
                     return;
                 }
@@ -149,13 +144,16 @@ class LtiPostMessage {
                 if (event.data.error) {
                     // log.error(event.data.error);
                     // log.print();
+                    console.log("sendPostMessage - messageHandler - event.data.error", event.data.error);
                     return reject(event.data.error);
                 }
                 //log.print();
                 resolve(event.data);
             };
             window.addEventListener('message', messageHandler);
-            //log.request(targetFrameName, data, targetOrigin);
+            // console.log("sendPostMessage after eventListener - messageHandler", messageHandler);
+            console.log("sendPostMessage after eventListener - data", data);
+            console.log("sendPostMessage after eventListener - targetOrigin", targetOrigin);
             targetFrame.postMessage(data, targetOrigin);
             timeout = setTimeout(() => {
                 window.removeEventListener('message', messageHandler);
@@ -188,11 +186,15 @@ class LtiPostMessage {
             console.log("sendPostMessageIfCapable - capabilities", capabilities);
             console.log("sendPostMessageIfCapable - target window", this.getTargetWindow());
             for (let i = 0; i < capabilities.supported_messages.length; i++) {
+                console.log("sendPostMessageIfCapable - data.subject", data.subject);
+                console.log("sendPostMessageIfCapable - capabilities.supported_messages", capabilities.supported_messages[i].subject);
                 if (![data.subject, 'org.imsglobal.' + data.subject].includes(capabilities.supported_messages[i].subject)) {
+                    console.log("sendPostMessageIfCapable - we hit the continue");
                     continue;
                 }
                 // Use subject specified in capabilities for backwards compatibility
                 data.subject = capabilities.supported_messages[i].subject;
+                console.log("sendPostMessageIfCapable - setting data.subject", data.subject);
                 return this.sendPostMessage(data, this.getTargetWindow(), undefined, capabilities.supported_messages[i].frame);
             }
             return Promise.reject({
@@ -219,8 +221,8 @@ class LtiPostMessage {
             key: key
         })
             .then((response) => {
-            console.log("getData key", key);
-            console.log("getData response", response);
+            console.log("getData - key", key);
+            console.log("getData - response", response);
             return response.value;
         });
     }
