@@ -175,6 +175,7 @@ class LtiStorage {
           // Found state in cookie, return true
           return Promise.resolve(true);
         }
+        console.log("postMessage_instance", _LtiPostMessage_instances);
         let platformStorage = this.ltiPostMessage(platformOrigin, launchFrame);
         return platformStorage
           .getData(LtiStorage.cookiePrefix + "_state_" + state)
