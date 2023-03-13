@@ -6,8 +6,6 @@ class LtiStorage {
     }
     async setStateAndNonce(platformOidcLoginUrl, oidcLoginData, launchFrame) {
         let launchWindow = launchFrame || window;
-        let state = LtiPostMessage.secureRandom();
-        let nonce = LtiPostMessage.secureRandom();
         return new Promise((resolve, reject) => {
             let params = new URLSearchParams(window.location.search);
             return resolve(params.has('lti_storage_target'));
@@ -15,20 +13,18 @@ class LtiStorage {
             .then(async (hasPlatformStorage) => {
             if (hasPlatformStorage) {
                 let platformStorage = this.ltiPostMessage(new URL(platformOidcLoginUrl.origin), launchWindow);
-                return platformStorage.putData(LtiStorage.cookiePrefix + '_state_' + state, state)
-                    .then(() => platformStorage.putData(LtiStorage.cookiePrefix + '_nonce_' + nonce, nonce));
+                return platformStorage.putData(LtiStorage.cookiePrefix + '_state_' + oidcLoginData.state, oidcLoginData.state)
+                    .then(() => platformStorage.putData(LtiStorage.cookiePrefix + '_nonce_' + oidcLoginData.nonce, oidcLoginData.nonce));
             }
             return Promise.reject();
         })
             .catch((err) => {
             err && console.log(err);
-            return this.setStateAndNonceCookies(state, nonce);
+            return this.setStateAndNonceCookies(oidcLoginData.state, oidcLoginData.nonce);
         })
             .then((hasState) => {
             let data = {
                 ...oidcLoginData,
-                state: state,
-                nonce: nonce,
                 scope: 'openid',
                 response_type: 'id_token',
                 response_mode: 'form_post',
