@@ -251,6 +251,11 @@ class LtiPostMessage {
 
   async sendPostMessage(data, targetWindow, originOverride, targetFrameName) {
     return new Promise((resolve, reject) => {
+
+        console.log("sendPostMessage - data: ", data);
+        console.log("sendPostMessage - targetWindow: ", targetWindow);
+        console.log("sendPostMessage - originOverride: ", originOverride);
+        console.log("sendPostMessage - targetFrameName: ", targetFrameName);
       let log = new LtiPostMessageLog(
         __classPrivateFieldGet(this, _LtiPostMessage_debug, "f")
       );
@@ -290,6 +295,7 @@ class LtiPostMessage {
           return;
         }
         log.response(event);
+        console.log("sendPostMessage - event.origin: ", event.origin)
         if (targetOrigin !== "*" && event.origin !== targetOrigin) {
           log.error({
             message: "Ignoring message, invalid origin: " + event.origin,
@@ -318,6 +324,8 @@ class LtiPostMessage {
         resolve(event.data);
       };
       window.addEventListener("message", messageHandler);
+      console.log("sendPostMessage after eventListener - data", data);
+      console.log("sendPostMessage after eventListener - targetOrigin", targetOrigin);
       log.request(targetFrameName, data, targetOrigin);
       targetFrame.postMessage(data, targetOrigin);
       timeout = setTimeout(() => {

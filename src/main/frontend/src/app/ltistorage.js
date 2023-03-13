@@ -64,9 +64,9 @@ class LtiStorage {
             return Promise.resolve(true);
         }
         let platformStorage = this.ltiPostMessage(platformOrigin, launchFrame);
-//        console.log("validateStateAndNonce - platformStorage", platformStorage);
-//        console.log("validateStateAndNonce - cookiePrefix", LtiStorage.cookiePrefix);
-//        console.log("validateStateAndNonce - state", state);
+        console.log("validateStateAndNonce - platformStorage", platformStorage);
+        console.log("validateStateAndNonce - cookiePrefix", LtiStorage.cookiePrefix);
+        console.log("validateStateAndNonce - state", state);
         return platformStorage.getData(LtiStorage.cookiePrefix + '_state_' + state)
             .then((value) => {
             if (!value || state !== value) {
@@ -107,9 +107,15 @@ class LtiPostMessage {
     }
     async sendPostMessage(data, targetWindow, originOverride, targetFrameName) {
         return new Promise((resolve, reject) => {
+            console.log("sendPostMessage - data: ", data);
+            console.log("sendPostMessage - targetWindow: ", targetWindow);
+            console.log("sendPostMessage - originOverride: ", originOverride);
+            console.log("sendPostMessage - targetFrameName: ", targetFrameName);
+
             // let log = new LtiPostMessageLog(this.#debug);
             let timeout;
             let targetOrigin = originOverride || this._targetOrigin.origin;
+            console.log("target origin", targetOrigin);
             data.message_id = 'message-' + LtiPostMessage.secureRandom(15);
             let targetFrame;
             try {
@@ -139,6 +145,7 @@ class LtiPostMessage {
                     return log.print();
                 }
                 */
+                console.log("sendPostMessage - event.origin: ", event.origin)
                 window.removeEventListener('message', messageHandler);
                 clearTimeout(timeout);
                 if (event.data.error) {
@@ -171,9 +178,17 @@ class LtiPostMessage {
     async sendPostMessageIfCapable(data) {
         // Call capability service
         return Promise.any([
-            this.sendPostMessage({ subject: 'lti.capabilities' }, this.getTargetWindow(), '*'),
+            this.sendPostMessage(
+                { subject: 'lti.capabilities' },
+                this.getTargetWindow(),
+                '*'
+            ),
             // Send new and old capabilities messages for support with pre-release subjects
-            this.sendPostMessage({ subject: 'org.imsglobal.lti.capabilities' }, this.getTargetWindow(), '*')
+            this.sendPostMessage(
+                { subject: 'org.imsglobal.lti.capabilities' },
+                this.getTargetWindow(),
+                '*'
+            )
         ])
             .then((capabilities) => {
             if (typeof capabilities.supported_messages == 'undefined') {
@@ -182,20 +197,25 @@ class LtiPostMessage {
                     message: 'No capabilities'
                 });
             }
-            console.log("sendPostMessageIfCapable - data", data);
-            console.log("sendPostMessageIfCapable - capabilities", capabilities);
-            console.log("sendPostMessageIfCapable - target window", this.getTargetWindow());
+//            console.log("sendPostMessageIfCapable - data", data);
+//            console.log("sendPostMessageIfCapable - capabilities", capabilities);
+//            console.log("sendPostMessageIfCapable - target window", this.getTargetWindow());
             for (let i = 0; i < capabilities.supported_messages.length; i++) {
                 console.log("sendPostMessageIfCapable - data.subject", data.subject);
                 console.log("sendPostMessageIfCapable - capabilities.supported_messages", capabilities.supported_messages[i].subject);
                 if (![data.subject, 'org.imsglobal.' + data.subject].includes(capabilities.supported_messages[i].subject)) {
-                    console.log("sendPostMessageIfCapable - we hit the continue");
                     continue;
                 }
                 // Use subject specified in capabilities for backwards compatibility
                 data.subject = capabilities.supported_messages[i].subject;
                 console.log("sendPostMessageIfCapable - setting data.subject", data.subject);
-                return this.sendPostMessage(data, this.getTargetWindow(), undefined, capabilities.supported_messages[i].frame);
+                // Setting the override to "*"
+                return this.sendPostMessage(
+                    data,
+                    this.getTargetWindow(),
+                    "*",
+                    capabilities.supported_messages[i].frame
+                );
             }
             return Promise.reject({
                 code: 'not_found',
