@@ -1,4 +1,4 @@
-"use strict";
+
 class LtiStorage {
     async initToolLogin(platformOidcLoginUrl, oidcLoginData, launchFrame) {
         return this.setStateAndNonce(platformOidcLoginUrl, oidcLoginData, launchFrame)
@@ -11,31 +11,31 @@ class LtiStorage {
             return resolve(params.has('lti_storage_target'));
         })
             .then(async (hasPlatformStorage) => {
-            if (hasPlatformStorage) {
-                let platformStorage = this.ltiPostMessage(new URL(platformOidcLoginUrl.origin), launchWindow);
-                return platformStorage.putData(LtiStorage.cookiePrefix + '_state_' + oidcLoginData.state, oidcLoginData.state)
-                    .then(() => platformStorage.putData(LtiStorage.cookiePrefix + '_nonce_' + oidcLoginData.nonce, oidcLoginData.nonce));
-            }
-            return Promise.reject();
-        })
+                if (hasPlatformStorage) {
+                    let platformStorage = this.ltiPostMessage(new URL(platformOidcLoginUrl.origin), launchWindow);
+                    return platformStorage.putData(LtiStorage.cookiePrefix + '_state_' + oidcLoginData.state, oidcLoginData.state)
+                        .then(() => platformStorage.putData(LtiStorage.cookiePrefix + '_nonce_' + oidcLoginData.nonce, oidcLoginData.nonce));
+                }
+                return Promise.reject();
+            })
             .catch((err) => {
-            err && console.log(err);
-            return this.setStateAndNonceCookies(oidcLoginData.state, oidcLoginData.nonce);
-        })
+                err && console.log(err);
+                return this.setStateAndNonceCookies(oidcLoginData.state, oidcLoginData.nonce);
+            })
             .then((hasState) => {
-            let data = {
-                ...oidcLoginData,
-                scope: 'openid',
-                response_type: 'id_token',
-                response_mode: 'form_post',
-                prompt: 'none', // Don't prompt user on redirect.
-            };
-            return {
-                url: platformOidcLoginUrl,
-                params: data,
-                target: hasState ? '_self' : '_blank',
-            };
-        });
+                let data = {
+                    ...oidcLoginData,
+                    scope: 'openid',
+                    response_type: 'id_token',
+                    response_mode: 'form_post',
+                    prompt: 'none', // Don't prompt user on redirect.
+                };
+                return {
+                    url: platformOidcLoginUrl,
+                    params: data,
+                    target: hasState ? '_self' : '_blank',
+                };
+            });
     }
     doLoginInitiationRedirect(formData) {
         let form = document.createElement("form");
@@ -65,17 +65,17 @@ class LtiStorage {
         console.log("validateStateAndNonce - state", state);
         return platformStorage.getData(LtiStorage.cookiePrefix + '_state_' + state)
             .then((value) => {
-            if (!value || state !== value) {
-                return Promise.reject();
-            }
-            return platformStorage.getData(LtiStorage.cookiePrefix + '_nonce_' + nonce);
-        })
+                if (!value || state !== value) {
+                    return Promise.reject();
+                }
+                return platformStorage.getData(LtiStorage.cookiePrefix + '_nonce_' + nonce);
+            })
             .then((value) => {
-            if (!value || nonce !== value) {
-                return Promise.reject();
-            }
-            return true;
-        })
+                if (!value || nonce !== value) {
+                    return Promise.reject();
+                }
+                return true;
+            })
             .catch(() => { return false; });
     }
     ltiPostMessage(targetOrigin, launchFrame) {
@@ -187,56 +187,58 @@ class LtiPostMessage {
             )
         ])
             .then((capabilities) => {
-            if (typeof capabilities.supported_messages == 'undefined') {
+                if (typeof capabilities.supported_messages == 'undefined') {
+                    return Promise.reject({
+                        code: 'not_found',
+                        message: 'No capabilities'
+                    });
+                }
+
+                for (let i = 0; i < capabilities.supported_messages.length; i++) {
+                    if (![data.subject, 'org.imsglobal.' + data.subject].includes(capabilities.supported_messages[i].subject)) {
+                        continue;
+                    }
+                    // Use subject specified in capabilities for backwards compatibility
+                    data.subject = capabilities.supported_messages[i].subject;
+                    console.log("sendPostMessageIfCapable - setting data.subject", data.subject);
+                    // Setting the override to "*"
+                    return this.sendPostMessage(
+                        data,
+                        this.getTargetWindow(),
+                        "*",
+                        capabilities.supported_messages[i].frame
+                    );
+                }
                 return Promise.reject({
                     code: 'not_found',
-                    message: 'No capabilities'
+                    message: 'Capabilities not found'
                 });
-            }
-
-            for (let i = 0; i < capabilities.supported_messages.length; i++) {
-                if (![data.subject, 'org.imsglobal.' + data.subject].includes(capabilities.supported_messages[i].subject)) {
-                    continue;
-                }
-                // Use subject specified in capabilities for backwards compatibility
-                data.subject = capabilities.supported_messages[i].subject;
-                console.log("sendPostMessageIfCapable - setting data.subject", data.subject);
-                // Setting the override to "*"
-                return this.sendPostMessage(
-                    data,
-                    this.getTargetWindow(),
-                    "*",
-                    capabilities.supported_messages[i].frame
-                );
-            }
-            return Promise.reject({
-                code: 'not_found',
-                message: 'Capabilities not found'
             });
-        });
     }
     ;
     async putData(key, value) {
         return this.sendPostMessageIfCapable({
             subject: 'lti.put_data',
             key: key,
-            value: value
+            value: value,
+            message_id: 'message-' + this.secureRandom(15)
         })
             .then((response) => {
-            return true;
-        });
+                return true;
+            });
     }
     ;
     async getData(key) {
         return this.sendPostMessageIfCapable({
             subject: 'lti.get_data',
-            key: key
+            key: key,
+            message_id: 'message-' + this.secureRandom(15)
         })
             .then((response) => {
-            console.log("getData - key", key);
-            console.log("getData - response", response);
-            return response.value;
-        });
+                console.log("getData - key", key);
+                console.log("getData - response", response);
+                return response.value;
+            });
     }
     ;
     getTargetWindow() {
