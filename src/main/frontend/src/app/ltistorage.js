@@ -193,12 +193,8 @@ class LtiPostMessage {
                     message: 'No capabilities'
                 });
             }
-//            console.log("sendPostMessageIfCapable - data", data);
-//            console.log("sendPostMessageIfCapable - capabilities", capabilities);
-//            console.log("sendPostMessageIfCapable - target window", this.getTargetWindow());
+
             for (let i = 0; i < capabilities.supported_messages.length; i++) {
-                console.log("sendPostMessageIfCapable - data.subject", data.subject);
-                console.log("sendPostMessageIfCapable - capabilities.supported_messages", capabilities.supported_messages[i].subject);
                 if (![data.subject, 'org.imsglobal.' + data.subject].includes(capabilities.supported_messages[i].subject)) {
                     continue;
                 }

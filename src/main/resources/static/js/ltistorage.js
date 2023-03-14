@@ -175,8 +175,9 @@ class LtiStorage {
           // Found state in cookie, return true
           return Promise.resolve(true);
         }
-        console.log("postMessage_instance", _LtiPostMessage_instances);
+        console.log("validateStateAndNonce - platformOrigin", platformOrigin);
         let platformStorage = this.ltiPostMessage(platformOrigin, launchFrame);
+
         return platformStorage
           .getData(LtiStorage.cookiePrefix + "_state_" + state)
           .then((value) => {
@@ -198,6 +199,8 @@ class LtiStorage {
           });
   }
   ltiPostMessage(targetOrigin, launchFrame) {
+    console.log("ltiPostMessage - targetOrigin", targetOrigin);
+    console.log("ltiPostMessage - launchFrame", launchFrame);
     return new LtiPostMessage(
       targetOrigin,
       launchFrame,
@@ -245,23 +248,17 @@ class LtiPostMessage {
     _LtiPostMessage_debug.set(this, false);
     __classPrivateFieldSet(this, _LtiPostMessage_debug, debug, "f");
     this._targetOrigin = new URL(targetOrigin);
-    console.log("constructor: ", this._targetOrigin);
     this._launchFrame = launchFrame || window;
   }
 
   async sendPostMessage(data, targetWindow, originOverride, targetFrameName) {
     return new Promise((resolve, reject) => {
-
-        console.log("sendPostMessage - data: ", data);
-        console.log("sendPostMessage - targetWindow: ", targetWindow);
-        console.log("sendPostMessage - originOverride: ", originOverride);
-        console.log("sendPostMessage - targetFrameName: ", targetFrameName);
       let log = new LtiPostMessageLog(
         __classPrivateFieldGet(this, _LtiPostMessage_debug, "f")
       );
       let timeout;
       let targetOrigin = originOverride || this._targetOrigin.origin;
-      console.log("target origin", targetOrigin);
+      console.log("sendPostMessage --- target origin", targetOrigin);
       let targetFrame;
       try {
         targetFrame = __classPrivateFieldGet(
@@ -295,14 +292,19 @@ class LtiPostMessage {
           return;
         }
         log.response(event);
-        console.log("sendPostMessage - event.origin: ", event.origin)
+        console.log("sendPostMessage - event.origin: ", event.origin);
+        console.log("sendPostMessage - targetOrigin: ", targetOrigin);
         if (targetOrigin !== "*" && event.origin !== targetOrigin) {
+           console.log("sendPostMessage - error 1 (event.origin): ", event.origin);
+           console.log("sendPostMessage - error 1 (targetOrigin): ", targetOrigin);
           log.error({
             message: "Ignoring message, invalid origin: " + event.origin,
           });
           return log.print();
         }
         if (event.data.subject !== data.subject + ".response") {
+           console.log("sendPostMessage - error 2 (event.data.subject): ", event.data.subject);
+           console.log("sendPostMessage - error 2 (data.subject): ", data.subject);
           log.error({
             message:
               "Ignoring message, invalid subject: [" +
