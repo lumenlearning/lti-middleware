@@ -112,7 +112,7 @@ class LtiPostMessage {
             let timeout;
             let targetOrigin = originOverride || this._targetOrigin.origin;
             console.log("target origin", targetOrigin);
-            data.message_id = 'message-' + LtiPostMessage.secureRandom(15);
+//            data.message_id = 'message-' + LtiPostMessage.secureRandom(15);
             let targetFrame;
             try {
                 targetFrame = this.getTargetFrame(targetWindow, targetFrameName);
@@ -124,6 +124,8 @@ class LtiPostMessage {
                 targetFrame = targetWindow;
             }
             const messageHandler = (event) => {
+                 console.log("sendPostMessage - messageHandler - event", event);
+
                 if (event.data.message_id !== data.message_id) {
                     console.log("sendPostMessage - messageHandler (inside if) - data.message_id", data.message_id);
                     console.log("sendPostMessage - messageHandler (inside if)- event", event);
@@ -172,16 +174,27 @@ class LtiPostMessage {
     }
     ;
     async sendPostMessageIfCapable(data) {
+        function secureRandom(length) {
+          let random = new Uint8Array(length||63);
+          crypto.getRandomValues(random);
+          return btoa(String.fromCharCode(...random)).replace(/\//g, '_').replace(/\+/g, '-');
+        }
         // Call capability service
         return Promise.any([
             this.sendPostMessage(
-                { subject: 'lti.capabilities' },
+               {
+                    subject: 'lti.capabilities',
+                    message_id: 'message-' + secureRandom(15)
+                },
                 this.getTargetWindow(),
                 '*'
             ),
             // Send new and old capabilities messages for support with pre-release subjects
             this.sendPostMessage(
-                { subject: 'org.imsglobal.lti.capabilities' },
+                {
+                    subject: 'org.imsglobal.lti.capabilities',
+                    message_id: 'message-' + secureRandom(15)
+                },
                 this.getTargetWindow(),
                 '*'
             )
@@ -214,37 +227,44 @@ class LtiPostMessage {
                     message: 'Capabilities not found'
                 });
             });
-    }
-    ;
+    };
+
     async putData(key, value) {
-        return this.sendPostMessageIfCapable({
-            subject: 'lti.put_data',
-            key: key,
-            value: value,
-            message_id: 'message-' + this.secureRandom(15)
-        })
-            .then((response) => {
-                return true;
-            });
-    }
-    ;
+        function secureRandom(length) {
+            let random = new Uint8Array(length||63);
+            crypto.getRandomValues(random);
+            return btoa(String.fromCharCode(...random)).replace(/\//g, '_').replace(/\+/g, '-');
+        };
+        return {
+          subject: "lti.put_data",
+          key: key,
+          value: value,
+          message_id: 'message-' + secureRandom(15)
+        };
+    };
+
     async getData(key) {
+        function secureRandom(length) {
+            let random = new Uint8Array(length||63);
+            crypto.getRandomValues(random);
+            return btoa(String.fromCharCode(...random)).replace(/\//g, '_').replace(/\+/g, '-');
+        };
         return this.sendPostMessageIfCapable({
             subject: 'lti.get_data',
             key: key,
-            message_id: 'message-' + this.secureRandom(15)
+            message_id: 'message-' + secureRandom(15)
         })
             .then((response) => {
                 console.log("getData - key", key);
                 console.log("getData - response", response);
                 return response.value;
             });
-    }
-    ;
+    };
+
     getTargetWindow() {
         return this._launchFrame.opener || this._launchFrame.parent;
-    }
-    ;
+    };
+
     getTargetFrame(targetWindow, frameName) {
         if (frameName && targetWindow.frames[frameName]) {
             return targetWindow.frames[frameName];

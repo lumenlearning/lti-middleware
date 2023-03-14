@@ -318,6 +318,7 @@ class LtiPostMessage {
         window.removeEventListener("message", messageHandler);
         clearTimeout(timeout);
         if (event.data.error) {
+         console.log("sendPostMessage - messageHandler - event.data.error", event.data.error);
           log.error(event.data.error);
           log.print();
           return reject(event.data.error);
@@ -343,10 +344,19 @@ class LtiPostMessage {
     });
   }
   async sendPostMessageIfCapable(data) {
+      function secureRandom(length) {
+        let random = new Uint8Array(length||63);
+        crypto.getRandomValues(random);
+        return btoa(String.fromCharCode(...random)).replace(/\//g, '_').replace(/\+/g, '-');
+      }
+
     // Call capability service
     return Promise.any([
       this.sendPostMessage(
-        { subject: "lti.capabilities" },
+        {
+            subject: 'lti.capabilities',
+            message_id: 'message-' + secureRandom(15)
+        },
         __classPrivateFieldGet(
           this,
           _LtiPostMessage_instances,
@@ -357,7 +367,10 @@ class LtiPostMessage {
       ),
       // Send new and old capabilities messages for support with pre-release subjects
       this.sendPostMessage(
-        { subject: "org.imsglobal.lti.capabilities" },
+        {
+            subject: "org.imsglobal.lti.capabilities",
+            message_id: 'message-' + secureRandom(15)
+         },
         __classPrivateFieldGet(
           this,
           _LtiPostMessage_instances,
