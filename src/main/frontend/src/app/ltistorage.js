@@ -1,5 +1,6 @@
 
 class LtiStorage {
+    // We never use the initToolLogin method from this file but keeping it here for now
     async initToolLogin(platformOidcLoginUrl, oidcLoginData, launchFrame) {
         return this.setStateAndNonce(platformOidcLoginUrl, oidcLoginData, launchFrame)
             .then(this.doLoginInitiationRedirect);

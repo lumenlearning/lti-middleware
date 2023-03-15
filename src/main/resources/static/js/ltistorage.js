@@ -176,7 +176,6 @@ class LtiStorage {
           return Promise.resolve(true);
         }
         let platformStorage = this.ltiPostMessage(platformOrigin, launchFrame);
-
         return platformStorage
           .getData(LtiStorage.cookiePrefix + "_state_" + state)
           .then((value) => {
