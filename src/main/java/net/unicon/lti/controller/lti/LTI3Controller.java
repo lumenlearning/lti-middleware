@@ -199,10 +199,6 @@ public class LTI3Controller {
                 model.addAttribute("platform_family_code", lti3Request.getLtiToolPlatformFamilyCode());
                 model.addAttribute("ltiServiceUrl", ltiDataService.getLocalUrl());
             } else {
-                String iss = lti3Request.getIss();
-                log.debug("issuer---");
-                log.debug(iss);
-
                 model.addAttribute("lti_storage_target", req.getParameter("lti_storage_target"));
                 model.addAttribute("state", state);
                 model.addAttribute("iss", lti3Request.getIss());
@@ -234,9 +230,6 @@ public class LTI3Controller {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Deep Linking Disabled");
                 }
             }
-            String iss = lti3Request.getIss();
-            log.debug("issuer---");
-            log.debug(iss);
 
             model.addAttribute("lti_storage_target", req.getParameter("lti_storage_target"));
             model.addAttribute("state", state);

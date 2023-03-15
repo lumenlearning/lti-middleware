@@ -61,7 +61,6 @@ store.dispatch(fetchCourses(1));
 
 let stateAndNonceCheck = new LtiStorage().validateStateAndNonce(ltiLaunchData.state, ltiLaunchData.nonce, ltiLaunchData.iss, window);
 stateAndNonceCheck.then(function(result) {
-    console.log("result from validateState", result);
     if (result === true){
       root.render(
         <React.StrictMode>

@@ -175,7 +175,6 @@ class LtiStorage {
           // Found state in cookie, return true
           return Promise.resolve(true);
         }
-        console.log("validateStateAndNonce - platformOrigin", platformOrigin);
         let platformStorage = this.ltiPostMessage(platformOrigin, launchFrame);
 
         return platformStorage
@@ -199,8 +198,6 @@ class LtiStorage {
           });
   }
   ltiPostMessage(targetOrigin, launchFrame) {
-    console.log("ltiPostMessage - targetOrigin", targetOrigin);
-    console.log("ltiPostMessage - launchFrame", launchFrame);
     return new LtiPostMessage(
       targetOrigin,
       launchFrame,
@@ -258,7 +255,6 @@ class LtiPostMessage {
       );
       let timeout;
       let targetOrigin = originOverride || this._targetOrigin.origin;
-      console.log("sendPostMessage --- target origin", targetOrigin);
       let targetFrame;
       try {
         targetFrame = __classPrivateFieldGet(
@@ -292,19 +288,13 @@ class LtiPostMessage {
           return;
         }
         log.response(event);
-        console.log("sendPostMessage - event.origin: ", event.origin);
-        console.log("sendPostMessage - targetOrigin: ", targetOrigin);
         if (targetOrigin !== "*" && event.origin !== targetOrigin) {
-           console.log("sendPostMessage - error 1 (event.origin): ", event.origin);
-           console.log("sendPostMessage - error 1 (targetOrigin): ", targetOrigin);
           log.error({
             message: "Ignoring message, invalid origin: " + event.origin,
           });
           return log.print();
         }
         if (event.data.subject !== data.subject + ".response") {
-           console.log("sendPostMessage - error 2 (event.data.subject): ", event.data.subject);
-           console.log("sendPostMessage - error 2 (data.subject): ", data.subject);
           log.error({
             message:
               "Ignoring message, invalid subject: [" +
@@ -318,7 +308,6 @@ class LtiPostMessage {
         window.removeEventListener("message", messageHandler);
         clearTimeout(timeout);
         if (event.data.error) {
-         console.log("sendPostMessage - messageHandler - event.data.error", event.data.error);
           log.error(event.data.error);
           log.print();
           return reject(event.data.error);
@@ -327,8 +316,6 @@ class LtiPostMessage {
         resolve(event.data);
       };
       window.addEventListener("message", messageHandler);
-      console.log("sendPostMessage after eventListener - data", data);
-      console.log("sendPostMessage after eventListener - targetOrigin", targetOrigin);
       log.request(targetFrameName, data, targetOrigin);
       targetFrame.postMessage(data, targetOrigin);
       timeout = setTimeout(() => {
