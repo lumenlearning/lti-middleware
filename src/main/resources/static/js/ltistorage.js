@@ -244,7 +244,6 @@ class LtiPostMessage {
     _LtiPostMessage_debug.set(this, false);
     __classPrivateFieldSet(this, _LtiPostMessage_debug, debug, "f");
     this._targetOrigin = new URL(targetOrigin);
-    console.log("constructor: ", this._targetOrigin);
     this._launchFrame = launchFrame || window;
   }
 
@@ -255,7 +254,6 @@ class LtiPostMessage {
       );
       let timeout;
       let targetOrigin = originOverride || this._targetOrigin.origin;
-      console.log("target origin", targetOrigin);
       let targetFrame;
       try {
         targetFrame = __classPrivateFieldGet(
@@ -332,10 +330,19 @@ class LtiPostMessage {
     });
   }
   async sendPostMessageIfCapable(data) {
+      function secureRandom(length) {
+        let random = new Uint8Array(length||63);
+        crypto.getRandomValues(random);
+        return btoa(String.fromCharCode(...random)).replace(/\//g, '_').replace(/\+/g, '-');
+      }
+
     // Call capability service
     return Promise.any([
       this.sendPostMessage(
-        { subject: "lti.capabilities" },
+        {
+            subject: 'lti.capabilities',
+            message_id: 'message-' + secureRandom(15)
+        },
         __classPrivateFieldGet(
           this,
           _LtiPostMessage_instances,
@@ -346,7 +353,10 @@ class LtiPostMessage {
       ),
       // Send new and old capabilities messages for support with pre-release subjects
       this.sendPostMessage(
-        { subject: "org.imsglobal.lti.capabilities" },
+        {
+            subject: "org.imsglobal.lti.capabilities",
+            message_id: 'message-' + secureRandom(15)
+         },
         __classPrivateFieldGet(
           this,
           _LtiPostMessage_instances,

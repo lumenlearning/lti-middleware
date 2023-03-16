@@ -235,9 +235,6 @@ public class LTI3Controller {
             model.addAttribute("state", state);
             model.addAttribute("nonce", lti3Request.getNonce());
             model.addAttribute("iss", lti3Request.getIss());
-            String iss = lti3Request.getIss();
-            log.debug("issuer---");
-            log.debug(iss);
             return "lti3Redirect";
 
         } catch (SignatureException e) {
