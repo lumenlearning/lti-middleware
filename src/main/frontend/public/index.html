@@ -7,6 +7,7 @@
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
+    <script src="../app/ltistorage.js"></script>
     <div id="root"></div>
     <script>
         <!--/* These values are bound to Thymeleaf variables, they are set in the backend controller and filled in the client side in the render. */-->
@@ -20,10 +21,14 @@
           context: '[[${context}]]',
           root_outcome_guid: '[[${root_outcome_guid}]]',
           platform_family_code: '[[${platform_family_code}]]',
-          lti_system_error: '[[${lti_system_error}]]'
+          lti_system_error: '[[${lti_system_error}]]',
+          ltiStorageTarget: '[[${lti_storage_target}]]',
+          nonce: '[[${nonce}]]'
         };
-        <!--/* We have to set an attribute to the root element so the APP can use the values of the LTI launch data. */-->
-        document.getElementById('root').setAttribute('lti-launch-data', JSON.stringify(ltiLaunchData));
+        console.log("issuer from deeplinking", ltiLaunchData.iss);
+
+    document.getElementById('root').setAttribute('lti-launch-data', JSON.stringify(ltiLaunchData));
+
     </script>
   </body>
 </html>

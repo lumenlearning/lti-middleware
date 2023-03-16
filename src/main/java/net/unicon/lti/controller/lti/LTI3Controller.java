@@ -98,6 +98,7 @@ public class LTI3Controller {
         String state = req.getParameter("state");
         //We will use this link to find the content to display.
         String link = req.getParameter("link");
+        String ltiStorageTarget = req.getParameter("lti_storage_target");
         String altDomain = req.getHeader("x-formated-host");
         if (StringUtils.isNotBlank(altDomain)){
             String extractedDomain = DomainUtils.extractDomain(altDomain);
@@ -200,6 +201,8 @@ public class LTI3Controller {
             } else {
                 model.addAttribute("lti_storage_target", req.getParameter("lti_storage_target"));
                 model.addAttribute("state", state);
+                model.addAttribute("iss", lti3Request.getIss());
+                model.addAttribute("nonce", lti3Request.getNonce());
                 model.addAttribute("target", ltiDataService.getLocalUrl() + "/demo?link=" + link);
                 return "lti3Redirect";
             }
@@ -215,8 +218,9 @@ public class LTI3Controller {
                     model.addAttribute("root_outcome_guid", ltiContext.getRootOutcomeGuid());
                     model.addAttribute("ltiServiceUrl", ltiDataService.getLocalUrl());
                     model.addAttribute("state", state);
-                    model.addAttribute("lti_storage_target", req.getParameter("lti_storage_target"));
-
+                    model.addAttribute("lti_storage_target", ltiStorageTarget);
+                    model.addAttribute("nonce", lti3Request.getNonce());
+                    
                     log.debug("Deep Linking menu opening for iss: {}, client_id: {}, deployment_id: {}, context: {}, and root_outcome_guid: {}",
                             lti3Request.getIss(), clientIdFromState, deploymentIdFromState, lti3Request.getLtiContextId(), ltiContext.getRootOutcomeGuid());
 
@@ -229,6 +233,8 @@ public class LTI3Controller {
 
             model.addAttribute("lti_storage_target", req.getParameter("lti_storage_target"));
             model.addAttribute("state", state);
+            model.addAttribute("nonce", lti3Request.getNonce());
+            model.addAttribute("iss", lti3Request.getIss());
             return "lti3Redirect";
 
         } catch (SignatureException e) {

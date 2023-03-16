@@ -22,9 +22,18 @@
     <form name="redirectForm" th:action="${target}" method="post">
         <input name="id_token" type="hidden" th:value="${id_token}" />
     </form>
+    <script type="text/javascript" th:src="@{/js/ltistorage.js}"></script>
+    <script th:inline="javascript">
+        let state = [[${ state }]];
+        let nonce = [[${ nonce }]];
+        let platformOrigin = [[${ iss }]];
 
-    <script type="text/javascript">
-        document.redirectForm.submit();
+        let stateAndNonceCheck = new LtiStorage().validateStateAndNonce(state, nonce, platformOrigin, window)
+        stateAndNonceCheck.then(function(result) {
+            if (result === true){
+                document.redirectForm.submit();
+            }
+        });
     </script>
 </body>
 </html>

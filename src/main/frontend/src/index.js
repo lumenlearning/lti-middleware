@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import appSlice from './app/appSlice';
 import { fetchCourses } from './app/appSlice';
+import LtiStorage from './app/ltistorage';
 import { isValidRootOutcomeGuid } from './util/Utils.js';
 
 // Components import
@@ -46,6 +47,7 @@ const initialState = {
   root_outcome_guid: isValidRootOutcomeGuid(ltiLaunchData.root_outcome_guid) ? ltiLaunchData.root_outcome_guid : null,
   platform_family_code: ltiLaunchData.platform_family_code,
   lti_system_error: ltiLaunchData.lti_system_error,
+  ltiStorageTarget: ltiLaunchData.ltiStorageTarget,
 };
 
 // Creates the store and preloads the initial state of the store.
@@ -57,15 +59,24 @@ const store = configureStore({
 // Once the store is configured, load the courses from the backend.
 store.dispatch(fetchCourses(1));
 
-root.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <ThemeProvider breakpoints={['xs', 'xxs','sm']}>
-        <App />
-      </ThemeProvider>
-    </Provider>
-  </React.StrictMode>
-);
+let stateAndNonceCheck = new LtiStorage().validateStateAndNonce(ltiLaunchData.state, ltiLaunchData.nonce, ltiLaunchData.iss, window);
+stateAndNonceCheck.then(function(result) {
+    if (result === true){
+      root.render(
+        <React.StrictMode>
+          <Provider store={store}>
+            <ThemeProvider breakpoints={['xs', 'xxs','sm']}>
+              <App />
+            </ThemeProvider>
+          </Provider>
+        </React.StrictMode>
+      );
+    }
+    // TODO: If result === false then we will want to redirect to the error page here
+});
+
+
+
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

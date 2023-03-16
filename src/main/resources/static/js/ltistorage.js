@@ -72,8 +72,8 @@ class LtiStorage {
       oidcLoginData,
       launchFrame,
       hasPlatformStorage
-    );
-    //.then(this.doLoginInitiationRedirect); //TODO: when do we redirect? where to redirect? will send a post request as a form
+    )
+    .then(this.doLoginInitiationRedirect);
   }
   async setStateAndNonce(
     platformOidcLoginUrl,
@@ -163,39 +163,38 @@ class LtiStorage {
     form.submit();
   }
   async validateStateAndNonce(state, nonce, platformOrigin, launchFrame) {
-    //TODO: this function is not used - do we need it?
     // Check cookie first
     if (
-      document.cookie
-        .split("; ")
-        .includes(LtiStorage.cookiePrefix + "_state_" + state + "=" + state) &&
-      document.cookie
-        .split("; ")
-        .includes(LtiStorage.cookiePrefix + "_nonce_" + nonce + "=" + nonce)
-    ) {
-      // Found state in cookie, return true
-      return Promise.resolve(true);
-    }
-    let platformStorage = this.ltiPostMessage(platformOrigin, launchFrame);
-    return platformStorage
-      .getData(LtiStorage.cookiePrefix + "_state_" + state)
-      .then((value) => {
-        if (!value || state !== value) {
-          return Promise.reject();
+          document.cookie
+            .split("; ")
+            .includes(LtiStorage.cookiePrefix + "_state_" + state + "=" + state) &&
+          document.cookie
+            .split("; ")
+            .includes(LtiStorage.cookiePrefix + "_nonce_" + nonce + "=" + nonce)
+        ) {
+          // Found state in cookie, return true
+          return Promise.resolve(true);
         }
-        return platformStorage.getData(
-          LtiStorage.cookiePrefix + "_nonce_" + nonce
-        );
-      })
-      .then((value) => {
-        if (!value || nonce !== value) {
-          return Promise.reject();
-        }
-        return true;
-      })
-      .catch(() => {
-        return false;
-      });
+        let platformStorage = this.ltiPostMessage(platformOrigin, launchFrame);
+        return platformStorage
+          .getData(LtiStorage.cookiePrefix + "_state_" + state)
+          .then((value) => {
+            if (!value || state !== value) {
+              return Promise.reject();
+            }
+            return platformStorage.getData(
+              LtiStorage.cookiePrefix + "_nonce_" + nonce
+            );
+          })
+          .then((value) => {
+            if (!value || nonce !== value) {
+              return Promise.reject();
+            }
+            return true;
+          })
+          .catch(() => {
+            return false;
+          });
   }
   ltiPostMessage(targetOrigin, launchFrame) {
     return new LtiPostMessage(
@@ -244,9 +243,10 @@ class LtiPostMessage {
     _LtiPostMessage_instances.add(this);
     _LtiPostMessage_debug.set(this, false);
     __classPrivateFieldSet(this, _LtiPostMessage_debug, debug, "f");
-    this._targetOrigin = targetOrigin;
+    this._targetOrigin = new URL(targetOrigin);
     this._launchFrame = launchFrame || window;
   }
+
   async sendPostMessage(data, targetWindow, originOverride, targetFrameName) {
     return new Promise((resolve, reject) => {
       let log = new LtiPostMessageLog(
@@ -254,7 +254,6 @@ class LtiPostMessage {
       );
       let timeout;
       let targetOrigin = originOverride || this._targetOrigin.origin;
-      data.message_id = "message-" + LtiPostMessage.secureRandom(15);
       let targetFrame;
       try {
         targetFrame = __classPrivateFieldGet(
@@ -331,10 +330,19 @@ class LtiPostMessage {
     });
   }
   async sendPostMessageIfCapable(data) {
+      function secureRandom(length) {
+        let random = new Uint8Array(length||63);
+        crypto.getRandomValues(random);
+        return btoa(String.fromCharCode(...random)).replace(/\//g, '_').replace(/\+/g, '-');
+      }
+
     // Call capability service
     return Promise.any([
       this.sendPostMessage(
-        { subject: "lti.capabilities" },
+        {
+            subject: 'lti.capabilities',
+            message_id: 'message-' + secureRandom(15)
+        },
         __classPrivateFieldGet(
           this,
           _LtiPostMessage_instances,
@@ -345,7 +353,10 @@ class LtiPostMessage {
       ),
       // Send new and old capabilities messages for support with pre-release subjects
       this.sendPostMessage(
-        { subject: "org.imsglobal.lti.capabilities" },
+        {
+            subject: "org.imsglobal.lti.capabilities",
+            message_id: 'message-' + secureRandom(15)
+         },
         __classPrivateFieldGet(
           this,
           _LtiPostMessage_instances,
@@ -379,7 +390,7 @@ class LtiPostMessage {
             "m",
             _LtiPostMessage_getTargetWindow
           ).call(this),
-          undefined,
+          "*",
           capabilities.supported_messages[i].frame
         );
       }
@@ -390,17 +401,29 @@ class LtiPostMessage {
     });
   }
   async putData(key, value) {
+    function secureRandom(length) {
+      let random = new Uint8Array(length||63);
+      crypto.getRandomValues(random);
+      return btoa(String.fromCharCode(...random)).replace(/\//g, '_').replace(/\+/g, '-');
+    }
     return {
       subject: "lti.put_data",
       key: key,
       value: value,
+      message_id: 'message-' + secureRandom(15)
     };
   }
 
   async getData(key) {
+  function secureRandom(length) {
+        let random = new Uint8Array(length||63);
+        crypto.getRandomValues(random);
+        return btoa(String.fromCharCode(...random)).replace(/\//g, '_').replace(/\+/g, '-');
+      };
     return this.sendPostMessageIfCapable({
       subject: "lti.get_data",
       key: key,
+      message_id: 'message-' + secureRandom(15)
     }).then((response) => {
       return response.value;
     });
@@ -430,6 +453,7 @@ class LtiPostMessageLog {
     this._start_time = Date.now();
     __classPrivateFieldSet(this, _LtiPostMessageLog_debug, debug, "f");
   }
+
   request(targetFrameName, data, targetOrigin) {
     this._request = {
       timestamp: Date.now(),
