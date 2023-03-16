@@ -72,6 +72,7 @@ stateAndNonceCheck.then(function(result) {
         </React.StrictMode>
       );
     }
+    // TODO: If result === false then we will want to redirect to the error page here
 });
 
 

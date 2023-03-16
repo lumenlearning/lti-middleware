@@ -111,28 +111,13 @@ class LtiPostMessage {
             }
             const messageHandler = (event) => {
                 if (event.data.message_id !== data.message_id) {
-                    //log.error({message: 'Ignoring message, invalid message_id: [' + event.data.message_id + '] expected: [' + data.message_id + ']'});
                     return;
                 }
-                /*
-                log.response(event);
-                if (targetOrigin !== '*' && event.origin !== targetOrigin) {
-                    log.error({message: 'Ignoring message, invalid origin: ' + event.origin});
-                    return log.print();
-                }
-                if (event.data.subject !== data.subject + '.response') {
-                    log.error({message: 'Ignoring message, invalid subject: [' + event.data.subject + '] expected: [' + data.subject + '.response]'});
-                    return log.print();
-                }
-                */
                 window.removeEventListener('message', messageHandler);
                 clearTimeout(timeout);
                 if (event.data.error) {
-                    // log.error(event.data.error);
-                    // log.print();
                     return reject(event.data.error);
                 }
-                //log.print();
                 resolve(event.data);
             };
             window.addEventListener('message', messageHandler);
@@ -143,8 +128,6 @@ class LtiPostMessage {
                     code: 'timeout',
                     message: 'No response received after 1000ms'
                 };
-                // log.error(timeout_error);
-                // log.print();
                 reject(timeout_error);
             }, 1000);
         });
