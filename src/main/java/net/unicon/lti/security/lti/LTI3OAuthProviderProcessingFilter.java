@@ -12,6 +12,7 @@
  */
 package net.unicon.lti.security.lti;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
@@ -95,8 +96,17 @@ public class LTI3OAuthProviderProcessingFilter extends GenericFilterBean {
             String state = httpServletRequest.getParameter("state");
             String link = httpServletRequest.getParameter("link");
 
+            // Fourth, we validate the state to be sure that is correct
+            Jws<Claims> stateClaims = ltijwtService.validateState(state);
+            if (stateClaims == null) {
+                throw new IllegalStateException("LTI state is invalid");
+            }
+
             // Verify if lti_storage_target is present. If not, we want to use the cookie path
-            if (StringUtils.isBlank(httpServletRequest.getParameter("lti_storage_target"))) {
+            String ltiStorageTarget = StringUtils.isBlank(httpServletRequest.getParameter("lti_storage_target"))
+                    ? stateClaims.getBody().get("ltiStorageTarget", String.class)
+                    : httpServletRequest.getParameter("lti_storage_target");
+            if (StringUtils.isBlank(ltiStorageTarget)) {
                 // Second, we make sure the browser has a state cookie
                 if (httpServletRequest.getCookies() == null) {
                     throw new IllegalStateException("LTI request doesn't contain any cookies");
@@ -115,12 +125,6 @@ public class LTI3OAuthProviderProcessingFilter extends GenericFilterBean {
                 }
             }
 
-            // Fourth, we validate the state to be sure that is correct
-            Jws<Claims> stateClaims = ltijwtService.validateState(state);
-            if (stateClaims == null) {
-                throw new IllegalStateException("LTI state is invalid");
-            }
-
             // Once we have the state validated we need the key to check the JWT signature from the id_token,
             // and extract all the values in the LTI3Request object.
             // Most of the platforms will provide a JWK repo URL and we will have it stored in configuration,
@@ -130,7 +134,7 @@ public class LTI3OAuthProviderProcessingFilter extends GenericFilterBean {
             // The state provides us the way to find that key in our repo. This is not a requirement in LTI, it is just a way to do it that we've implemented, but each one can use the
             // state in a different way.
             String jwt = httpServletRequest.getParameter("id_token");
-            String ltiStorageTarget = httpServletRequest.getParameter("lti_storage_target");
+//            String ltiStorageTarget = stateClaims.getBody().get("ltiStorageTarget", String.class);
             if (StringUtils.isNotBlank(jwt)) {
                 //Now we validate the JWT token
                 Jws<Claims> jws = ltijwtService.validateJWT(jwt, stateClaims.getBody().getAudience());

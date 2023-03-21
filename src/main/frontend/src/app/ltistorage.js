@@ -60,21 +60,30 @@ class LtiStorage {
             // Found state in cookie, return true
             return Promise.resolve(true);
         }
+        console.log("state: " + state);
         let platformStorage = this.ltiPostMessage(platformOrigin, launchFrame);
         return platformStorage.getData(LtiStorage.cookiePrefix + '_state_' + state)
             .then((value) => {
+                console.log("state value", value);
                 if (!value || state !== value) {
+                    console.log("rejected point a");
                     return Promise.reject();
                 }
                 return platformStorage.getData(LtiStorage.cookiePrefix + '_nonce_' + nonce);
             })
             .then((value) => {
                 if (!value || nonce !== value) {
+                    console.log("rejected point b");
                     return Promise.reject();
                 }
+                console.log("i succeeded");
                 return true;
             })
-            .catch(() => { return false; });
+            .catch((e) =>
+            {
+                console.log("error: ", e);
+                return false;
+            });
     }
     ltiPostMessage(targetOrigin, launchFrame) {
         return new LtiPostMessage(targetOrigin, launchFrame);
@@ -123,6 +132,7 @@ class LtiPostMessage {
             window.addEventListener('message', messageHandler);
             targetFrame.postMessage(data, targetOrigin);
             timeout = setTimeout(() => {
+                console.log("timeout", data);
                 window.removeEventListener('message', messageHandler);
                 let timeout_error = {
                     code: 'timeout',
@@ -160,6 +170,7 @@ class LtiPostMessage {
             )
         ])
             .then((capabilities) => {
+                console.log("got capabilities", capabilities);
                 if (typeof capabilities.supported_messages == 'undefined') {
                     return Promise.reject({
                         code: 'not_found',
@@ -174,6 +185,8 @@ class LtiPostMessage {
                     // Use subject specified in capabilities for backwards compatibility
                     data.subject = capabilities.supported_messages[i].subject;
                     // Setting the override to "*"
+                    console.log(capabilities.supported_messages[i]);
+                    console.log(capabilities.supported_messages[i].frame);
                     return this.sendPostMessage(
                         data,
                         this.getTargetWindow(),
@@ -193,8 +206,9 @@ class LtiPostMessage {
             crypto.getRandomValues(random);
             return btoa(String.fromCharCode(...random)).replace(/\//g, '_').replace(/\+/g, '-');
         };
+        console.log("put data");
         return {
-          subject: "lti.put_data",
+          subject: "org.imsglobal.lti.put_data",
           key: key,
           value: value,
           message_id: 'message-' + secureRandom(15)
@@ -212,6 +226,7 @@ class LtiPostMessage {
             message_id: 'message-' + secureRandom(15)
         })
             .then((response) => {
+                console.log("getData response", response);
                 return response.value;
             });
     };

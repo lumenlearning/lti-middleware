@@ -103,6 +103,7 @@ export const fetchCourses = (page) => (dispatch, getState) => {
   // Get the id_token and lti_storage_target from the state, we already have access to getState as the second argument.
   const idToken = getState().id_token;
   const lti_storage_target =  getState().ltiStorageTarget;
+  console.log(getState());
   // Get the previous selection, if this has a value is because it has been sent from the backend, exists an association.
   const root_outcome_guid = getState().root_outcome_guid;
   // If no specific page is requested, request the first one.

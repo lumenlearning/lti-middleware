@@ -98,11 +98,14 @@ class LtiStorage {
             )
             .then((stateData) => {
               localStorage.setItem("state", JSON.stringify(stateData)); //storing state in local storage
-              window.parent.postMessage(
-                //sending state in post message
-                stateData,
-                new URL(platformOidcLoginUrl).origin
-              );
+              platformStorage.sendPostMessageIfCapable(stateData);
+              // platformStorage.sendPostMessage(
+              //   //sending state in post message
+              //   stateData,
+              //   window.parent,
+              //   new URL(platformOidcLoginUrl).origin,
+              //   oidcLoginData.lti_storage_target
+              // );
             })
             .then(() => {
               platformStorage
@@ -112,11 +115,14 @@ class LtiStorage {
                 )
                 .then((nonceData) => {
                   localStorage.setItem("nonce", JSON.stringify(nonceData)); //storing nonce in local storage
-                  window.parent.postMessage(
-                    //sending nonce in post message
-                    nonceData,
-                    new URL(platformOidcLoginUrl).origin
-                  );
+                  platformStorage.sendPostMessageIfCapable(nonceData);
+                  // platformStorage.sendPostMessage(
+                  //   //sending nonce in post message
+                  //   nonceData,
+                  //   window.parent,
+                  //   new URL(platformOidcLoginUrl).origin,
+                  //   oidcLoginData.lti_storage_target
+                  // );
                 });
             });
         }
@@ -286,6 +292,8 @@ class LtiPostMessage {
           });
           return;
         }
+        console.log("messageHandler");
+        console.log(event);
         log.response(event);
         if (targetOrigin !== "*" && event.origin !== targetOrigin) {
           log.error({

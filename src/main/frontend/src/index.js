@@ -71,6 +71,8 @@ stateAndNonceCheck.then(function(result) {
           </Provider>
         </React.StrictMode>
       );
+    } else {
+      root.render(<div>oh no I failed</div>);
     }
     // TODO: If result === false then we will want to redirect to the error page here
 });
