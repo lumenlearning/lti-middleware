@@ -20,6 +20,10 @@
       xml:lang="en">
 <body>
     <form name="redirectForm" th:action="${target}" method="post">
+        <input name="lmsState" type="hidden" th:value="state from lms" />
+        <input name="middlewareState" type="hidden" th:value="state from us" />
+    </form>
+    <form name="errorForm" th:action="${target}" method="post">
         <input name="id_token" type="hidden" th:value="${id_token}" />
     </form>
     <script type="text/javascript" th:src="@{/js/ltistorage.js}"></script>
@@ -33,6 +37,7 @@
             if (result === true){
                 document.redirectForm.submit();
             }
+            //else send post to handle error redirect
         });
     </script>
 </body>
