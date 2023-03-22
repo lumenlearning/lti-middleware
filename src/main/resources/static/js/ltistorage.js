@@ -185,7 +185,7 @@ class LtiStorage {
           .getData(LtiStorage.cookiePrefix + "_state_" + state)
           .then((value) => {
             if (!value || state !== value) {
-              return Promise.reject(new Error('State does not match'));
+              return Promise.reject(new Error(value));
             }
             return platformStorage.getData(
               LtiStorage.cookiePrefix + "_nonce_" + nonce
@@ -193,7 +193,7 @@ class LtiStorage {
           })
           .then((value) => {
             if (!value || nonce !== value) {
-              Promise.reject(new Error('Nonce does not match'));
+              Promise.reject(new Error(value));
             }
             return true;
           })

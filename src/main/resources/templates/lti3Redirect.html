@@ -19,11 +19,11 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.thymeleaf.org "
       xml:lang="en">
 <body>
+<!--    <form name="errorForm" th:action="${target}" method="post">-->
+<!--        <input name="lmsState" type="hidden" th:value=${state} />-->
+<!--        <input name="middlewareState" type="hidden" th:value=${state} />-->
+<!--    </form>-->
     <form name="redirectForm" th:action="${target}" method="post">
-        <input name="lmsState" type="hidden" th:value="state from lms" />
-        <input name="middlewareState" type="hidden" th:value="state from us" />
-    </form>
-    <form name="errorForm" th:action="${target}" method="post">
         <input name="id_token" type="hidden" th:value="${id_token}" />
     </form>
     <script type="text/javascript" th:src="@{/js/ltistorage.js}"></script>
