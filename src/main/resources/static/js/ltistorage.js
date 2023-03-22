@@ -154,7 +154,6 @@ class LtiStorage {
   }
   doLoginInitiationRedirect(formData) {
     //uses formData returned from setStateAndNonce function
-    //TODO: when do we need to do this redirect?
     let form = document.createElement("form");
     for (let key in formData.params) {
       let element = document.createElement("input");
@@ -186,7 +185,7 @@ class LtiStorage {
           .getData(LtiStorage.cookiePrefix + "_state_" + state)
           .then((value) => {
             if (!value || state !== value) {
-              return Promise.reject();
+              return Promise.reject(new Error('State does not match'));
             }
             return platformStorage.getData(
               LtiStorage.cookiePrefix + "_nonce_" + nonce
@@ -194,7 +193,7 @@ class LtiStorage {
           })
           .then((value) => {
             if (!value || nonce !== value) {
-              return Promise.reject();
+              Promise.reject(new Error('Nonce does not match'));
             }
             return true;
           })
