@@ -118,6 +118,7 @@ class LtiPostMessage {
                 targetFrameName = undefined;
                 targetFrame = targetWindow;
             }
+            console.log("targetFrame: ", targetFrame);
             const messageHandler = (event) => {
                 if (event.data.message_id !== data.message_id) {
                     return;
@@ -178,6 +179,7 @@ class LtiPostMessage {
                     });
                 }
 
+                console.log("capabilities line 182:", capabilities);
                 for (let i = 0; i < capabilities.supported_messages.length; i++) {
                     if (![data.subject, 'org.imsglobal.' + data.subject].includes(capabilities.supported_messages[i].subject)) {
                         continue;
@@ -232,10 +234,13 @@ class LtiPostMessage {
     };
 
     getTargetWindow() {
+        console.log("getTargetWindow()", this._launchFrame);
         return this._launchFrame.opener || this._launchFrame.parent;
     };
 
     getTargetFrame(targetWindow, frameName) {
+        console.log("targetWindow ", targetWindow);
+        console.log("frameName ", frameName);
         if (frameName && targetWindow.frames[frameName]) {
             return targetWindow.frames[frameName];
         }
