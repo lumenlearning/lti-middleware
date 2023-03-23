@@ -311,12 +311,10 @@ public class LTI3Controller {
             log.debug("middlewareState: " + req.getParameter("middlewareState"));
             log.debug("lmsTimedOut: " + req.getParameter("lmsTimedOut"));
             return "error";
-        } else {
+        } else if (StringUtils.isNotBlank(req.getParameter("stateNonMatch"))) {
             log.debug("lmsState and middlewareState do not match.");
-            log.debug("lmsState: " + req.getParameter("lmsState"));
-            log.debug("middlewareState: " + req.getParameter("middlewareState"));
             return "error";
         }
+        return null;
     }
-
 }
