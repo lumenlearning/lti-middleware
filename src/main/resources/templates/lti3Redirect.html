@@ -19,8 +19,11 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.thymeleaf.org "
       xml:lang="en">
 <body>
-    <form name="errorForm" th:action="{@/error}" method="post">
+    <form name="errorFormStateNonMatch" th:action="@{/error}" method="post">
         <input name="stateNonMatch" type="hidden" th:value="true" />
+    </form>
+    <form name="errorFormTimeOut" th:action="@{/error}" method="post">
+        <input name="lmsTimedOut" type="hidden" th:value="true" />
     </form>
     <form name="redirectForm" th:action="${target}" method="post">
         <input name="id_token" type="hidden" th:value="${id_token}" />
