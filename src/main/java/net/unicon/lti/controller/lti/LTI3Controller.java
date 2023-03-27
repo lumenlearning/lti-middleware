@@ -96,13 +96,13 @@ public class LTI3Controller {
     public String lti3(HttpServletRequest req, HttpServletResponse res, Model model)  {
         //First we will get the state, validate it
         String state = req.getParameter("state");
-        Jws<Claims> stateClaims = ltijwtService.validateState(state);
+        Jws<Claims> claims = ltijwtService.validateState(state);
 
         //We will use this link to find the content to display.
         String link = req.getParameter("link");
 //        String ltiStorageTarget = req.getParameter("lti_storage_target");
         String ltiStorageTarget = StringUtils.isBlank(req.getParameter("lti_storage_target"))
-                ? stateClaims.getBody().get("ltiStorageTarget", String.class)
+                ? claims.getBody().get("ltiStorageTarget", String.class)
                 : req.getParameter("lti_storage_target");
         String altDomain = req.getHeader("x-formated-host");
         if (StringUtils.isNotBlank(altDomain)){
@@ -116,7 +116,7 @@ public class LTI3Controller {
         }
 
         try {
-            Jws<Claims> claims = ltijwtService.validateState(state);
+//            Jws<Claims> claims = ltijwtService.validateState(state);
             lti3Request = LTI3Request.getInstance(link); // validates nonce & id_token
             // This is just an extra check that we have added, but it is not necessary.
             // Checking that the clientId in the state (if sent in OIDC initiation request) matches the one coming with the ltiRequest.

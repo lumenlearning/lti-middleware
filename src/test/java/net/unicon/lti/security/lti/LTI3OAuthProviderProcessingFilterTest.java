@@ -109,7 +109,7 @@ public class LTI3OAuthProviderProcessingFilterTest {
                 IllegalStateException.class,
                 () -> {lti3OAuthFilter.doFilter(req, res, mockChain);}
         );
-        assertEquals("LTI request doesn't contain any cookies", exception.getMessage());
+        assertEquals("LTI state is invalid", exception.getMessage());
     }
 
     @Test
@@ -121,7 +121,7 @@ public class LTI3OAuthProviderProcessingFilterTest {
                 IllegalStateException.class,
                 () -> {lti3OAuthFilter.doFilter(req, res, mockChain);}
         );
-        assertEquals("LTI state could not be found", exception.getMessage());
+        assertEquals("LTI state is invalid", exception.getMessage());
     }
 
     @Test
@@ -134,7 +134,7 @@ public class LTI3OAuthProviderProcessingFilterTest {
                 IllegalStateException.class,
                 () -> {lti3OAuthFilter.doFilter(req, res, mockChain);}
         );
-        assertEquals("LTI request doesn't contain the expected state", exception.getMessage());
+        assertEquals("LTI state is invalid", exception.getMessage());
     }
 
     @Test
