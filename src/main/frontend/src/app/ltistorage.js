@@ -115,17 +115,21 @@ class LtiPostMessage {
                 targetFrame = this.getTargetFrame(targetWindow, targetFrameName);
             }
             catch (e) {
+                console.log(e);
                 targetFrameName = undefined;
                 targetFrame = targetWindow;
             }
             console.log("targetFrame: ", targetFrame);
             const messageHandler = (event) => {
                 if (event.data.message_id !== data.message_id) {
+                    // console.log("event.data.message_id: ", event.data.message_id);
+                    // console.log("data.message_id: ", data.message_id);
                     return;
                 }
                 window.removeEventListener('message', messageHandler);
                 clearTimeout(timeout);
                 if (event.data.error) {
+                    console.log("event.data.error: ", event.data.error);
                     return reject(event.data.error);
                 }
                 resolve(event.data);
